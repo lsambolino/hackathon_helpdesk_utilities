@@ -12,6 +12,7 @@ from pydantic import BaseModel
 
 from app.agents.coordinator import ChatReply, TriageResult, chat_turn, triage_ticket
 from app.agents.forecast import forecast_zones
+from app.agents.historical import summarize as summarize_historical
 from app.db import conn_ctx, init_db, rows_to_list
 
 # ---------- KPI assumptions (disclosed in the dashboard) ----------
@@ -194,13 +195,17 @@ def dashboard():
         },
         "by_category": rows_to_list(by_cat_rows),
         "spike_forecast": forecast_zones(window_days=30),
+        "historical_insights": summarize_historical(),
     }
 
 
 # ---------- static frontend ----------
 
 if FRONTEND_DIR.exists():
+    # Mount under both names — `/static` for convention, `/frontend` because
+    # the generated HTML references that path.
     app.mount("/static", StaticFiles(directory=FRONTEND_DIR), name="static")
+    app.mount("/frontend", StaticFiles(directory=FRONTEND_DIR), name="frontend")
 
     @app.get("/")
     def index():

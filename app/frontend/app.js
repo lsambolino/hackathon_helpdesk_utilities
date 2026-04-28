@@ -242,21 +242,24 @@
 
   function renderDash(d) {
     const k = d.kpis || {};
+    const s = d.savings || {};
+    const h = d.historical_insights || {};
+
     const kpiHtml = `
       <div class="kpi-grid">
         <div class="card kpi">
           <div class="label">Tasso auto-risoluzione</div>
-          <div class="value">${fmtPct(k.auto_resolution_rate)}</div>
+          <div class="value">${k.auto_resolution_rate_pct !== undefined ? k.auto_resolution_rate_pct + "%" : "—"}</div>
           <div class="sub">ticket chiusi senza intervento umano</div>
         </div>
         <div class="card kpi">
           <div class="label">Tempo medio gestione</div>
-          <div class="value">${k.mean_handle_time_agent_min !== undefined ? k.mean_handle_time_agent_min + "'" : "—"}</div>
-          <div class="sub">agente vs umano: ${k.mean_handle_time_human_min !== undefined ? k.mean_handle_time_human_min + "'" : "—"}</div>
+          <div class="value">${k.avg_agent_handle_min !== undefined ? k.avg_agent_handle_min + "'" : "—"}</div>
+          <div class="sub">vs ${k.avg_human_handle_min || "—"}' umano · −${k.handle_time_reduction_pct || 0}%</div>
         </div>
         <div class="card kpi">
           <div class="label">Escalation</div>
-          <div class="value">${fmtPct(k.escalation_rate)}</div>
+          <div class="value">${k.escalation_rate_pct !== undefined ? k.escalation_rate_pct + "%" : "—"}</div>
           <div class="sub">ticket inoltrati a operatore</div>
         </div>
         <div class="card kpi">
@@ -267,15 +270,26 @@
       </div>
     `;
 
+    const savingsHtml = s.annual_saving_eur !== undefined ? `
+      <div class="card" style="margin-top: 16px; background: #e7f6f3;">
+        <h3 style="margin: 0 0 8px; font-size: 14px; color: #0f766e;">Risparmio annuo stimato</h3>
+        <div style="font-size: 32px; font-weight: 700; color: #0f766e;">${escapeHtml(s.annual_saving_eur_human_readable || "")}</div>
+        <div style="font-size: 13px; color: var(--muted); margin-top: 6px;">
+          ${s.annual_tickets_assumed?.toLocaleString("it-IT")} ticket/anno × €${s.saving_per_ticket_eur} risparmiato per ticket
+          (umano €${s.cost_per_ticket_human_eur} → agentico €${s.cost_per_ticket_agent_eur})
+        </div>
+      </div>
+    ` : "";
+
     const cats = d.by_category || [];
-    const maxCount = cats.reduce((m, c) => Math.max(m, c.count || 0), 1);
+    const maxCount = cats.reduce((m, c) => Math.max(m, c.n || 0), 1);
     const barsHtml = cats.length === 0
       ? `<div class="empty">Nessun dato disponibile.</div>`
       : cats.map(c => `
           <div class="bar-row">
             <div class="label">${escapeHtml(c.category || "—")}</div>
-            <div class="bar"><div class="fill" style="width: ${(100 * (c.count || 0) / maxCount).toFixed(1)}%"></div></div>
-            <div class="count">${c.count || 0}</div>
+            <div class="bar"><div class="fill" style="width: ${(100 * (c.n || 0) / maxCount).toFixed(1)}%"></div></div>
+            <div class="count">${c.n || 0}</div>
           </div>
         `).join("");
 
@@ -285,13 +299,37 @@
       : `<div class="zone-list">` + zones.map(z => `
           <div class="zone-card risk-${escapeHtml(z.risk || "low")}">
             <div class="zone-name">${escapeHtml(z.zone)}</div>
-            <div class="zone-meta">Rischio: ${escapeHtml(z.risk || "—")}${z.expected_tickets !== undefined ? " · attesi ~" + z.expected_tickets : ""}</div>
-            ${z.reason ? `<div class="zone-meta">${escapeHtml(z.reason)}</div>` : ""}
+            <div class="zone-meta">Rischio: ${escapeHtml(z.risk || "—")} · ${z.recent_count || 0} recenti vs ${z.prior_count || 0} prima</div>
+            <div class="zone-meta">Crescita: ${z.growth_pct !== undefined ? z.growth_pct + "%" : "—"}</div>
           </div>
         `).join("") + `</div>`;
 
+    let historicalHtml = "";
+    if (h && h.available) {
+      const topCatsHtml = (h.top_categories || []).slice(0, 5).map(c =>
+        `<div class="bar-row">
+           <div class="label">${escapeHtml(c.category)}</div>
+           <div class="count">${c.count}</div>
+         </div>`
+      ).join("");
+      historicalHtml = `
+        <div class="card" style="margin-top: 24px;">
+          <h3 style="margin: 0 0 12px; font-size: 14px;">Backlog storico — 1.000 reclami chiusi</h3>
+          <div class="kpi-grid" style="margin-bottom: 12px;">
+            <div class="card kpi"><div class="label">Tempo medio risoluzione</div><div class="value">${h.avg_resolution_days || "—"} <small style="font-size:14px;color:var(--muted);">giorni</small></div><div class="sub">baseline storico</div></div>
+            <div class="card kpi"><div class="label">CSAT medio</div><div class="value">${h.avg_csat_score || "—"} <small style="font-size:14px;color:var(--muted);">/5</small></div><div class="sub">soddisfazione cliente</div></div>
+            <div class="card kpi"><div class="label">Importo contestato</div><div class="value">€${(h.disputed_amount_eur_total || 0).toLocaleString("it-IT", {maximumFractionDigits: 0})}</div><div class="sub">su ${h.total_complaints} reclami</div></div>
+            <div class="card kpi"><div class="label">Reclami totali</div><div class="value">${h.total_complaints}</div><div class="sub">categorie: 14</div></div>
+          </div>
+          <h4 style="margin: 12px 0 6px; font-size: 13px; color: var(--muted);">Top 5 categorie storiche</h4>
+          ${topCatsHtml}
+        </div>
+      `;
+    }
+
     el("dash-root").innerHTML = `
       ${kpiHtml}
+      ${savingsHtml}
       <div class="split">
         <div class="card">
           <h3 style="margin: 0 0 12px; font-size: 14px;">Ticket per categoria (ultimi 30 giorni)</h3>
@@ -302,6 +340,7 @@
           ${zonesHtml}
         </div>
       </div>
+      ${historicalHtml}
     `;
   }
 

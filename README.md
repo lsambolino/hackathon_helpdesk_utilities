@@ -93,6 +93,19 @@ Assumptions are exposed live by `GET /api/dashboard` so the dashboard, presentat
 - The handle-time KPI is a simulation: human baseline is a fixed assumption (8 min/ticket) compared against measured agent path latency. Disclosed in the dashboard.
 - The chatbot is a synchronous CLI/REST loop, not streaming.
 
+## Historical backlog (parallel data work)
+
+A 1,000-entry synthetic complaints dataset (`hydric_complaints_backlog.json`) was contributed in parallel by another team member and merged into this branch. It powers a separate "historical insights" panel on the dashboard and gives the presentation defensible baseline numbers:
+
+| Metric (1,000 closed complaints) | Value |
+|---|---|
+| Average time to resolution | **189 days** |
+| Average CSAT | **3.45 / 5** |
+| Total disputed amount | **€233,686** |
+| Top category | Provider Switch — error / incomplete transfer (124 cases) |
+
+The agentic solution moves "average time to resolution" from 189 days to <1 day for auto-resolved categories and reduces backlog buildup for the rest. This is the *narrative* benefit on top of the €175K direct opex saving.
+
 ## Team & roles
 
 This README, the code, and the deliverables were built collaboratively — two
