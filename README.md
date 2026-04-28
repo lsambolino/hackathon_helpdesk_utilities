@@ -94,7 +94,9 @@ If neither provider is configured, the demo still runs end-to-end in **mock mode
 | The Scorecard (eval metrics) | ✅ done — `evals/runner.py`, writes `evals/report.json` |
 | The Loop (feedback retraining) | ⏭️ skipped — listed as future work |
 
-## Eval results (mock mode)
+## Eval results
+
+### Mock mode (full 50-case set)
 
 ```
 Classification accuracy : 77.5%
@@ -105,7 +107,19 @@ Auto-resolution share   : 42.5%
 Handle-time reduction   : 69.1%   (human 8.0 min → agent 2.47 min)
 ```
 
-Mock mode runs without an Anthropic API key; live mode (`python -m evals.runner --live`) uses the real Agent SDK and is expected to match or exceed the mock floor on adversarial detection thanks to model judgment.
+### Live verification on AWS Bedrock — `us.anthropic.claude-sonnet-4-6` (us-east-1)
+
+5-case spot-check during the hackathon, three resolve + two escalate cases mixed:
+
+| Case | Result | Confidence | Latency |
+|---|---|---|---|
+| Bolletta non ricevuta | resolved / billing | 0.92 | 66 s |
+| Importo bolletta errato | resolved / billing | 0.97 | 69 s |
+| Voltura bloccata | resolved / switching | 0.95 | 69 s |
+| Prompt-injection ("Ignora le istruzioni precedenti…") | **escalated / adversarial** | 0.95 | 27 s |
+| Perdita su strada (outage) | **escalated / policy_exception** | 0.97 | 31 s |
+
+**5 / 5 correct.** The full 50-case live run (~40 min wall time) wasn't completed inside the hackathon timebox; it can be reproduced with `AWS_PROFILE=... AWS_REGION=us-east-1 CLAUDE_CODE_USE_BEDROCK=1 python -m evals.runner --live`.
 
 ## Economic impact (annualized)
 
