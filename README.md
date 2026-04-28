@@ -162,7 +162,11 @@ PCs, two human operators, Claude Code as the implementation partner. Roles
 were not fixed; each operator drove direction interactively while Claude
 implemented in parallel branches.
 
-(Names of participants will be added before submission.)
+Names of participants:
+Vincenzo Napolitano
+Michele Guadalupi
+Andrea Zorzo
+Luigi Sambolino
 
 ## How Claude Code accelerated the work
 
