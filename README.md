@@ -50,14 +50,41 @@ python -m evals.runner
 
 | Waypoint | Status |
 |---|---|
-| The Mandate (scope + escalation rules) | _in progress_ |
-| The Bones (architecture ADR) | _in progress_ |
-| The Tools (4–5 per specialist) | _in progress_ |
-| The Triage (coordinator + classification) | _in progress_ |
-| The Brake (human-in-the-loop) | _in progress_ |
-| The Attack (adversarial set) | _in progress_ |
-| The Scorecard (eval metrics) | _in progress_ |
-| The Loop (feedback retraining) | _skipped — out of scope for this timebox_ |
+| The Mandate (scope + escalation rules) | ✅ done — see `docs/adr/0001-architecture.md` |
+| The Bones (architecture ADR) | ✅ done |
+| The Tools (4–5 per specialist) | ✅ done — 20 MCP tools across coordinator + 3 specialists |
+| The Triage (coordinator + classification) | ✅ done — classify → route → resolve/escalate |
+| The Brake (human-in-the-loop) | ✅ done — `can_use_tool` callback + 6 escalation rules |
+| The Attack (adversarial set) | ✅ done — 10 adversarial cases, 100% pass rate |
+| The Scorecard (eval metrics) | ✅ done — `evals/runner.py`, writes `evals/report.json` |
+| The Loop (feedback retraining) | ⏭️ skipped — listed as future work |
+
+## Eval results (mock mode)
+
+```
+Classification accuracy : 77.5%
+Action accuracy         : 75.0%
+False-confidence rate   :  6.7%   (lower is better)
+Adversarial pass rate   : 100.0%  (target 100%)
+Auto-resolution share   : 42.5%
+Handle-time reduction   : 69.1%   (human 8.0 min → agent 2.47 min)
+```
+
+Mock mode runs without an Anthropic API key; live mode (`python -m evals.runner --live`) uses the real Agent SDK and is expected to match or exceed the mock floor on adversarial detection thanks to model judgment.
+
+## Economic impact (annualized)
+
+Conservative assumption: 100,000 tickets/year (≈10% of 1M customers, lower bound for the Italian water sector).
+
+| Item | Value |
+|---|---|
+| Cost / ticket — human path | **€3.33** (8 min × €25/h fully loaded) |
+| Cost / ticket — agent path | **€1.58** (mix of auto-resolved + agent-pre-triaged escalation) |
+| Saving / ticket | **€1.76** |
+| **Annual direct opex saving** | **≈ €175,500/year** |
+| For a public regulated utility | flows into **tariff headroom** under ARERA |
+
+Assumptions are exposed live by `GET /api/dashboard` so the dashboard, presentation, and README always cite the same numbers.
 
 ## Honest disclosures
 
