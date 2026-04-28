@@ -3,6 +3,13 @@
 Public entry points:
     triage_ticket(ticket_id) -> TriageResult         # used by /api/tickets/{id}/triage
     chat_turn(message, session_id, customer_id) -> ChatReply  # used by /api/chat
+
+Model routing:
+    The SDK is provider-agnostic. Set CLAUDE_CODE_USE_BEDROCK=1 to route
+    through AWS Bedrock (boto3 credential chain — AWS_PROFILE/AWS_REGION).
+    Otherwise the SDK uses ANTHROPIC_API_KEY against the Anthropic API.
+    Override the model with HELPDESK_MODEL (full ID, e.g.
+    'us.anthropic.claude-sonnet-4-6' for Bedrock cross-region inference).
 """
 from __future__ import annotations
 
@@ -33,6 +40,48 @@ from app.agents.specialists.billing import BILLING_AGENT
 from app.agents.specialists.switching import SWITCHING_AGENT
 from app.agents.specialists.chatbot import CHATBOT_AGENT
 from app.db import audit, conn_ctx, now_iso
+
+
+# ---------- model + provider selection ----------
+
+def _is_bedrock() -> bool:
+    return os.environ.get("CLAUDE_CODE_USE_BEDROCK", "").strip() in ("1", "true", "yes")
+
+
+def _has_credentials() -> bool:
+    """True if either an Anthropic API key or AWS creds (any of the standard
+    boto3 chain entries) are visible in env. Conservative — we only check env
+    here, so users running with `aws sso login` profile may need to export
+    AWS_PROFILE for our heuristic to flip live mode on."""
+    if os.environ.get("ANTHROPIC_API_KEY"):
+        return True
+    if _is_bedrock() and (
+        os.environ.get("AWS_PROFILE")
+        or os.environ.get("AWS_BEARER_TOKEN_BEDROCK")
+        or os.environ.get("AWS_ACCESS_KEY_ID")
+    ):
+        return True
+    return False
+
+
+def _model_for(role: str) -> str:
+    """Return the model ID for a given role. Honors HELPDESK_MODEL override
+    and switches between Anthropic and Bedrock naming."""
+    override = os.environ.get("HELPDESK_MODEL")
+    if override:
+        return override
+    if _is_bedrock():
+        # Cross-region inference profiles for Bedrock (require model access enabled)
+        return {
+            "coordinator": "us.anthropic.claude-sonnet-4-6",
+            "chatbot":     "us.anthropic.claude-sonnet-4-6",
+            "fast":        "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+        }.get(role, "us.anthropic.claude-sonnet-4-6")
+    return {
+        "coordinator": "claude-sonnet-4-6",
+        "chatbot":     "claude-sonnet-4-6",
+        "fast":        "claude-haiku-4-5",
+    }.get(role, "claude-sonnet-4-6")
 
 # ---------- structured outputs ----------
 
@@ -197,7 +246,7 @@ async def triage_ticket(ticket_id: int, *, mock: bool | None = None) -> TriageRe
     without burning real tokens, while keeping the codepath honest.
     """
     if mock is None:
-        mock = not os.environ.get("ANTHROPIC_API_KEY")
+        mock = not _has_credentials()
 
     t0 = time.time()
     with conn_ctx() as c:
@@ -222,7 +271,7 @@ async def triage_ticket(ticket_id: int, *, mock: bool | None = None) -> TriageRe
 
     options = ClaudeAgentOptions(
         system_prompt=COORDINATOR_PROMPT,
-        model="claude-sonnet-4-6",
+        model=_model_for("coordinator"),
         mcp_servers={"helpdesk": helpdesk_server},
         allowed_tools=tool_names(ALL_TOOLS),
         agents={
@@ -378,7 +427,7 @@ _SESSIONS: dict[str, dict[str, Any]] = {}
 async def chat_turn(message: str, session_id: str | None, customer_id: int | None,
                     mock: bool | None = None) -> ChatReply:
     if mock is None:
-        mock = not os.environ.get("ANTHROPIC_API_KEY")
+        mock = not _has_credentials()
 
     sid = session_id or str(uuid.uuid4())
     _SESSIONS.setdefault(sid, {"history": []})
@@ -389,7 +438,7 @@ async def chat_turn(message: str, session_id: str | None, customer_id: int | Non
 
     options = ClaudeAgentOptions(
         system_prompt=CHATBOT_AGENT.prompt,
-        model="claude-sonnet-4-6",
+        model=_model_for("chatbot"),
         mcp_servers={"helpdesk": helpdesk_server},
         allowed_tools=CHATBOT_AGENT.tools,
     )

@@ -33,7 +33,19 @@ this repository. Keep it short. Update it when a convention changes.
 python -m app.seed                    # reset DB
 uvicorn app.main:app --reload         # API + UI on :8080
 python -m evals.runner                # eval harness, writes evals/report.json
+python -m evals.runner --live         # uses the SDK against the configured provider
+python -m scripts.probe_bedrock       # one-shot Bedrock health check
 ```
+
+## Provider configuration
+
+The SDK is provider-agnostic. Pick exactly one:
+
+- **Anthropic API:** `export ANTHROPIC_API_KEY=sk-ant-...`
+- **AWS Bedrock:** `export CLAUDE_CODE_USE_BEDROCK=1`, `AWS_REGION=...`, `AWS_PROFILE=...`
+
+The model name is selected by `app/agents/coordinator.py::_model_for(role)` —
+do NOT hard-code model strings elsewhere. Override at runtime with `HELPDESK_MODEL`.
 
 ## Permissions / human-in-the-loop
 

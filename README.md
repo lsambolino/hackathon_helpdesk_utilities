@@ -32,7 +32,6 @@ ADR with diagram: [`docs/adr/0001-architecture.md`](docs/adr/0001-architecture.m
 ```bash
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-export ANTHROPIC_API_KEY=sk-...
 
 # 1. seed the demo database
 python -m app.seed
@@ -43,8 +42,38 @@ uvicorn app.main:app --reload --port 8080
 # 3. open http://localhost:8080  (ticket list + dashboard + chatbot)
 
 # 4. run the eval harness against the synthetic eval set
-python -m evals.runner
+python -m evals.runner            # mock mode (no credentials needed)
+python -m evals.runner --live     # uses the SDK against the configured provider
 ```
+
+### Picking a model provider
+
+The Agent SDK is provider-agnostic. Pick one of:
+
+**A) Anthropic API**
+```bash
+export ANTHROPIC_API_KEY=sk-ant-...
+```
+
+**B) AWS Bedrock**
+```bash
+export CLAUDE_CODE_USE_BEDROCK=1
+export AWS_REGION=us-east-1
+export AWS_PROFILE=<profile-with-bedrock-access>     # any profile from ~/.aws/credentials
+# (optional) override the model:
+# export HELPDESK_MODEL=us.anthropic.claude-sonnet-4-6
+```
+
+Bedrock prerequisites: model access must be enabled once in the AWS console
+(Bedrock → Model access → Anthropic Claude Sonnet 4.6) and the IAM role must
+allow `bedrock:InvokeModel` and `bedrock:InvokeModelWithResponseStream`.
+
+Quick health check before running the full eval:
+```bash
+python -m scripts.probe_bedrock
+```
+
+If neither provider is configured, the demo still runs end-to-end in **mock mode**: a deterministic keyword-based classifier short-circuits the SDK call so the dashboard, chatbot, and eval all produce realistic numbers.
 
 ## Status
 
