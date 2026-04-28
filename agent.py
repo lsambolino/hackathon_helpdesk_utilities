@@ -213,3 +213,57 @@ def run_scenario(persona: dict, chatbot: ChatbotClient,
         "conversation": conversation,
         "scores": scores,
     }
+
+
+def run_scenario_steps(persona: dict, chatbot: ChatbotClient, no_llm: bool = False):
+    """
+    Generator version of run_scenario for streaming UIs.
+
+    Yields dicts:
+      {"type": "customer", "text": ..., "turn": N}
+      {"type": "bot",      "text": ..., "latency": float, "turn": N}
+      {"type": "scores",   "scores": {...}, "conversation": [...]}
+    """
+    session_id = str(uuid.uuid4())
+    system = _CUSTOMER_SYSTEM.format(
+        profile=_format_profile(persona),
+        complaint=persona["complaint_text"],
+    )
+
+    history: list[dict] = []
+    conversation: list[dict] = []
+    latencies: list[float] = []
+
+    scripted_turns = min(MAX_TURNS, len(_SCRIPTED_FOLLOW_UPS) + 1)
+    turn_limit = scripted_turns if no_llm else MAX_TURNS
+
+    for turn in range(turn_limit):
+        if no_llm:
+            customer_msg = _scripted_customer_turn(persona["complaint_text"], turn)
+        else:
+            customer_msg = _generate_customer_turn(system, history)
+
+        history.append({"role": "assistant", "content": customer_msg})
+        yield {"type": "customer", "text": customer_msg, "turn": turn + 1}
+
+        if "[FINE CONVERSAZIONE]" in customer_msg:
+            break
+
+        bot_reply, latency = chatbot.send(customer_msg, session_id)
+        latencies.append(latency)
+        history.append({"role": "user", "content": bot_reply})
+        yield {"type": "bot", "text": bot_reply, "latency": latency, "turn": turn + 1}
+
+        conversation.append({
+            "turn": turn + 1,
+            "customer": customer_msg,
+            "bot": bot_reply,
+            "latency_s": latency,
+        })
+
+    avg_latency = sum(latencies) / len(latencies) if latencies else 0.0
+    scores = _scripted_evaluate(avg_latency) if no_llm else _evaluate(conversation, avg_latency)
+    scores["timing_score"] = _timing_score(avg_latency)
+    scores["avg_latency_s"] = round(avg_latency, 2)
+
+    yield {"type": "scores", "scores": scores, "conversation": conversation}
