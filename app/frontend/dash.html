@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dashboard — Helpdesk Servizio Idrico</title>
+  <link rel="stylesheet" href="/frontend/style.css" />
+</head>
+<body data-page="dash">
+  <header class="topbar">
+    <div class="brand">Helpdesk Servizio Idrico<small>Lombardia · area operativa</small></div>
+    <nav>
+      <a href="/frontend/index.html">Ticket</a>
+      <a href="/frontend/chat.html">Chatbot</a>
+      <a href="/frontend/dash.html" class="active">Dashboard</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <h2 class="page-title">Dashboard operativa</h2>
+    <p class="page-subtitle">Indicatori chiave, volumi per categoria e previsione disservizi per zona.</p>
+
+    <div id="dash-root">
+      <div class="empty">Caricamento dati...</div>
+    </div>
+  </main>
+
+  <script src="/frontend/app.js"></script>
+</body>
+</html>
