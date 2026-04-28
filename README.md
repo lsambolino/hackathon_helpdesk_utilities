@@ -55,7 +55,7 @@ The Agent SDK is provider-agnostic. Pick one of:
 export ANTHROPIC_API_KEY=sk-ant-...
 ```
 
-**B) AWS Bedrock**
+**B) AWS Bedrock** (verified working in this hackathon — `us.anthropic.claude-sonnet-4-6` in `us-east-1`)
 ```bash
 export CLAUDE_CODE_USE_BEDROCK=1
 export AWS_REGION=us-east-1
@@ -67,6 +67,12 @@ export AWS_PROFILE=<profile-with-bedrock-access>     # any profile from ~/.aws/c
 Bedrock prerequisites: model access must be enabled once in the AWS console
 (Bedrock → Model access → Anthropic Claude Sonnet 4.6) and the IAM role must
 allow `bedrock:InvokeModel` and `bedrock:InvokeModelWithResponseStream`.
+
+For a quick sanity check before running the full eval:
+```bash
+AWS_PROFILE=... AWS_REGION=us-east-1 CLAUDE_CODE_USE_BEDROCK=1 \
+  python -m scripts.probe_bedrock
+```
 
 Quick health check before running the full eval:
 ```bash
