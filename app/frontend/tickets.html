@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ticket — Helpdesk Servizio Idrico</title>
+  <link rel="stylesheet" href="/frontend/style.css" />
+</head>
+<body data-page="tickets">
+  <header class="topbar">
+    <div class="brand">Helpdesk Servizio Idrico<small>Lombardia · area operativa</small></div>
+    <nav>
+      <a href="/frontend/index.html" class="active">Ticket</a>
+      <a href="/frontend/chat.html">Chatbot</a>
+      <a href="/frontend/dash.html">Dashboard</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <h2 class="page-title">Ticket aperti</h2>
+    <p class="page-subtitle">Elenco dei ticket clienti. Selezionare una riga per vedere il dettaglio.</p>
+
+    <div class="split">
+      <div class="card" style="padding: 0; overflow: hidden;">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Cliente</th>
+              <th>Categoria</th>
+              <th>Oggetto</th>
+              <th>Stato</th>
+              <th>Priorità</th>
+              <th>Aperto</th>
+              <th>Agente</th>
+              <th>Confidenza</th>
+            </tr>
+          </thead>
+          <tbody id="tickets-tbody"></tbody>
+        </table>
+      </div>
+      <div class="card" id="ticket-detail">
+        <div class="empty">Selezionare un ticket per visualizzarne il dettaglio.</div>
+      </div>
+    </div>
+  </main>
+
+  <script src="/frontend/app.js"></script>
+</body>
+</html>

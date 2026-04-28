@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Chatbot — Helpdesk Servizio Idrico</title>
+  <link rel="stylesheet" href="/frontend/style.css" />
+</head>
+<body data-page="chat">
+  <header class="topbar">
+    <div class="brand">Helpdesk Servizio Idrico<small>Lombardia · area operativa</small></div>
+    <nav>
+      <a href="/frontend/index.html">Ticket</a>
+      <a href="/frontend/chat.html" class="active">Chatbot</a>
+      <a href="/frontend/dash.html">Dashboard</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <h2 class="page-title">Apri chatbot</h2>
+    <p class="page-subtitle">Assistente virtuale per richieste L1: bollette, voltura, segnalazioni disservizi.</p>
+
+    <div class="card chat-shell">
+      <div class="chat-history" id="chat-history"></div>
+      <div class="chat-input">
+        <input type="text" id="chat-input-field" placeholder="Scrivi un messaggio..." autocomplete="off" />
+        <button class="btn" id="chat-send">Invia</button>
+      </div>
+    </div>
+  </main>
+
+  <script src="/frontend/app.js"></script>
+</body>
+</html>

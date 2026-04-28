@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Helpdesk Utilities — Agentic Ticketing</title>
+<style>
+  :root {
+    --primary: #1f4e79;
+    --accent: #2a9d8f;
+    --warn: #e76f51;
+    --bg: #f6f8fb;
+    --ink: #1a2331;
+    --muted: #5b6b7d;
+    --line: #d8e0ea;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+  }
+  .deck { position: relative; height: 100vh; overflow: hidden; }
+  .slide {
+    position: absolute; inset: 0;
+    padding: 60px 80px 80px 80px;
+    display: flex; flex-direction: column; justify-content: center;
+    opacity: 0; transition: opacity .25s ease;
+    pointer-events: none;
+  }
+  .slide.active { opacity: 1; pointer-events: auto; }
+  .slide h1 { font-size: 48px; margin: 0 0 16px; color: var(--primary); }
+  .slide h2 { font-size: 32px; margin: 0 0 24px; color: var(--primary); }
+  .slide h3 { font-size: 22px; margin: 24px 0 12px; color: var(--ink); }
+  .slide p, .slide li { font-size: 19px; line-height: 1.5; color: var(--ink); }
+  .slide ul { padding-left: 24px; }
+  .subtitle { font-size: 22px; color: var(--muted); }
+
+  .nav {
+    position: fixed; right: 24px; bottom: 16px;
+    font-size: 14px; color: var(--muted);
+    background: white; padding: 6px 12px; border-radius: 14px;
+    border: 1px solid var(--line);
+  }
+  .nav b { color: var(--primary); }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+
+  .kpi {
+    background: white; border-radius: 12px; padding: 22px;
+    border: 1px solid var(--line);
+    box-shadow: 0 1px 2px rgba(20,40,80,.04);
+  }
+  .kpi .v { font-size: 38px; font-weight: 700; color: var(--primary); }
+  .kpi .l { font-size: 13px; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: .04em; }
+
+  .card {
+    background: white; border: 1px solid var(--line);
+    border-radius: 12px; padding: 18px 22px;
+  }
+
+  table { width: 100%; border-collapse: collapse; font-size: 16px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+  th { color: var(--muted); font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: .04em; }
+
+  .pill {
+    display: inline-block; padding: 3px 10px; border-radius: 12px;
+    font-size: 12px; font-weight: 600;
+    background: #eaf2fb; color: var(--primary);
+  }
+  .pill.warn { background: #fdecea; color: var(--warn); }
+  .pill.ok { background: #e7f6f3; color: var(--accent); }
+
+  pre {
+    background: #1a2331; color: #e7eef7;
+    padding: 16px 18px; border-radius: 8px;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size: 14px; line-height: 1.5; overflow-x: auto;
+  }
+
+  .arch {
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size: 13px; line-height: 1.35;
+    background: white; border: 1px solid var(--line); border-radius: 10px;
+    padding: 18px 22px; white-space: pre; color: var(--ink);
+  }
+
+  .footer-tag { color: var(--muted); font-size: 14px; margin-top: 28px; }
+  .pos-spread { display: flex; justify-content: space-between; align-items: baseline; }
+
+  .big-eur { font-size: 86px; font-weight: 800; color: var(--accent); line-height: 1; letter-spacing: -1px; }
+  .big-eur small { font-size: 22px; color: var(--muted); font-weight: 500; margin-left: 8px; }
+</style>
+</head>
+<body>
+<div class="deck" id="deck">
+
+  <!-- 1. TITLE -->
+  <section class="slide active">
+    <h1>Helpdesk Utilities</h1>
+    <p class="subtitle">Agentic ticketing for an Italian public water utility</p>
+    <div class="footer-tag">Claude Code Hackathon — Scenario 5: Agentic Solution<br>Built with the Claude Agent SDK · 2026-04-28</div>
+  </section>
+
+  <!-- 2. PROBLEM -->
+  <section class="slide">
+    <h2>The customer & the problem</h2>
+    <div class="grid-2">
+      <div>
+        <h3>Customer</h3>
+        <ul>
+          <li>Public water utility, Lombardy</li>
+          <li>~1 million customers</li>
+          <li>B2C and B2B (commercial, hospitality, industrial)</li>
+          <li>Regulated by ARERA — tariff structure scrutinized</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Pain points in today's ticketing</h3>
+        <ul>
+          <li>Bolletta non ricevuta / importi contestati</li>
+          <li>Voltura e switch fornitore bloccati</li>
+          <li>Disservizi (perdite, pressione, torbidità)</li>
+          <li>Conguagli, IVA B2B, rateizzazioni</li>
+          <li>Every ticket goes through a human first</li>
+        </ul>
+      </div>
+    </div>
+    <h3 style="margin-top:32px;">Quantified from the historical backlog (1,000 closed complaints)</h3>
+    <div class="grid-4">
+      <div class="kpi"><div class="v">189<small> days</small></div><div class="l">Avg time to resolution</div></div>
+      <div class="kpi"><div class="v">3.45<small>/5</small></div><div class="l">Avg CSAT</div></div>
+      <div class="kpi"><div class="v">€234k</div><div class="l">Disputed amount (sample)</div></div>
+      <div class="kpi"><div class="v">14</div><div class="l">Distinct complaint types</div></div>
+    </div>
+  </section>
+
+  <!-- 3. GOALS -->
+  <section class="slide">
+    <h2>Goals — measurable, defensible</h2>
+    <div class="grid-4">
+      <div class="kpi"><div class="v">≥10%</div><div class="l">Handle-time reduction (target)</div></div>
+      <div class="kpi"><div class="v">€</div><div class="l">Cost reduction → tariff headroom</div></div>
+      <div class="kpi"><div class="v">📈</div><div class="l">Spike forecast by zone</div></div>
+      <div class="kpi"><div class="v">💬</div><div class="l">Customer chatbot, escalates only when needed</div></div>
+    </div>
+    <p style="margin-top:32px;">The "double-digit improvement" is the bar. We aimed higher and disclose every assumption.</p>
+  </section>
+
+  <!-- 4. ARCHITECTURE -->
+  <section class="slide">
+    <h2>Architecture — boring, deployable</h2>
+    <div class="arch">┌──────────────────────────────────────┐
+│  Browser (vanilla HTML+JS, no deps)  │
+│  /tickets   /chat   /dash            │
+└─────────────────┬────────────────────┘
+                  │ fetch
+┌─────────────────▼────────────────────┐
+│  FastAPI app (single Python proc)    │
+│  REST + static + Agent SDK in-proc   │
+└──────┬──────────────────────┬────────┘
+       │                      │
+┌──────▼─────┐    ┌───────────▼──────────────┐
+│  SQLite    │    │  Claude Agent SDK         │
+│  helpdesk  │    │  ┌─────────────────────┐  │
+│            │    │  │  COORDINATOR        │  │
+│ customers  │    │  │  classify+route     │  │
+│ invoices   │    │  └──┬─────┬─────┬──────┘  │
+│ switches   │    │     │     │     │         │
+│ tickets    │    │  ┌──▼─┐ ┌─▼──┐ ┌▼─────┐   │
+│ comments   │    │  │BIL │ │SW  │ │CHAT  │   │
+│ kb         │    │  └────┘ └────┘ └──────┘   │
+│ outages    │    │   ↑  20 MCP tools, all    │
+│ audit_log  │    │      backed by SQLite     │
+└────────────┘    └───────────────────────────┘</div>
+  </section>
+
+  <!-- 5. AGENTS & TOOLS -->
+  <section class="slide">
+    <h2>Coordinator + 3 specialists, 20 tools</h2>
+    <table>
+      <tr><th>Agent</th><th>Role</th><th>Tools (4–5 each)</th></tr>
+      <tr>
+        <td><b>Coordinator</b></td>
+        <td>Classify, route, validate, escalate</td>
+        <td>get_ticket · classify · escalate · mark_resolved · post_comment</td>
+      </tr>
+      <tr>
+        <td><b>Billing</b></td>
+        <td>Bollette, IVA, conguagli, rateizzazioni</td>
+        <td>invoice_history · find_disputed · check_payment · request_rateizzazione · draft_reply</td>
+      </tr>
+      <tr>
+        <td><b>Switching</b></td>
+        <td>Switch fornitore, voltura, blocchi</td>
+        <td>get_request · check_blockers · query_provider · unblock_request · draft_reply</td>
+      </tr>
+      <tr>
+        <td><b>Chatbot</b></td>
+        <td>End-user L1, KB, ticket creation</td>
+        <td>kb_search · account_summary · outage_check · create_ticket · suggest_self_service</td>
+      </tr>
+    </table>
+  </section>
+
+  <!-- 6. THE BRAKE -->
+  <section class="slide">
+    <h2>"The Brake" — escalation rules, not vibes</h2>
+    <div class="card">
+      <h3>Enforced by the coordinator's permission callback (not just the prompt)</h3>
+      <ul>
+        <li><span class="pill warn">confidence &lt; 0.75</span> → escalate <code>low_confidence</code></li>
+        <li><span class="pill warn">amount &gt; €500</span> → escalate <code>high_amount</code></li>
+        <li><span class="pill warn">customer.vulnerable = 1</span> → escalate <code>vulnerable_customer</code></li>
+        <li><span class="pill warn">prompt-injection / DAN / authority spoof / chained instructions</span> → escalate <code>adversarial</code></li>
+        <li><span class="pill warn">specialist returns is_error twice</span> → escalate <code>specialist_failure</code></li>
+        <li><span class="pill warn">B2B contract dispute (IVA, voltura, SLA)</span> → escalate <code>policy_exception</code></li>
+      </ul>
+      <p style="margin-top:16px;color:var(--muted);">Vulnerable-customer status is enforced at the permission layer, so even a confident agent cannot auto-resolve those tickets — by construction.</p>
+    </div>
+  </section>
+
+  <!-- 7. EVAL RESULTS -->
+  <section class="slide">
+    <h2>Eval scorecard — 50 cases (40 + 10 adversarial)</h2>
+    <div class="grid-4">
+      <div class="kpi"><div class="v">100<small>%</small></div><div class="l">Adversarial pass rate</div></div>
+      <div class="kpi"><div class="v">75<small>%</small></div><div class="l">Action accuracy</div></div>
+      <div class="kpi"><div class="v">6.7<small>%</small></div><div class="l">False-confidence rate</div></div>
+      <div class="kpi"><div class="v">77.5<small>%</small></div><div class="l">Classification accuracy</div></div>
+    </div>
+    <h3 style="margin-top:32px;">Handle-time simulation</h3>
+    <div class="grid-3">
+      <div class="card"><div class="pos-spread"><span>Human baseline</span><b>8.0 min</b></div></div>
+      <div class="card"><div class="pos-spread"><span>Agent path</span><b>2.47 min</b></div></div>
+      <div class="card" style="background:#e7f6f3;border-color:#bfe6dd;"><div class="pos-spread"><span><b>Reduction</b></span><b style="color:var(--accent);">−69.1%</b></div></div>
+    </div>
+    <p class="footer-tag">Mock-mode results from <code>python -m evals.runner</code>. Live SDK results expected ≥ mock floor on adversarial detection (model judgment over heuristics).</p>
+  </section>
+
+  <!-- 8. ECONOMIC IMPACT -->
+  <section class="slide">
+    <h2>Economic impact (annualized)</h2>
+    <div class="big-eur">€175,513<small> /year direct opex saving</small></div>
+    <div class="grid-3" style="margin-top:36px;">
+      <div class="card">
+        <h3 style="margin:0 0 10px;">Per-ticket cost</h3>
+        <p>Human: <b>€3.33</b> (8 min × €25/h)<br>
+           Agent: <b>€1.58</b> (auto-resolve API + escalated tickets)<br>
+           <span class="pill ok">Saving: €1.76/ticket</span></p>
+      </div>
+      <div class="card">
+        <h3 style="margin:0 0 10px;">Volume (assumed)</h3>
+        <p>100,000 tickets / year — conservative for a 1M-customer utility (≈10% complaint rate). Production volumes likely 2–5×.</p>
+      </div>
+      <div class="card">
+        <h3 style="margin:0 0 10px;">For end customers</h3>
+        <p>Public utility → opex savings flow into <b>tariff headroom</b>. Indirect benefit plus measurable resolution-time collapse = visible service quality.</p>
+      </div>
+    </div>
+    <h3 style="margin-top:28px;">Beyond opex — what the historical backlog says</h3>
+    <div class="grid-3">
+      <div class="card"><b>189 → &lt;1 day</b> avg time to resolution<br><span style="color:var(--muted);font-size:14px;">(auto-resolved tickets close in seconds; escalated tickets pre-triaged for the human queue)</span></div>
+      <div class="card"><b>€234k</b> disputed amount (1,000-case sample)<br><span style="color:var(--muted);font-size:14px;">Faster validation/refund path = lower regulatory exposure and customer churn risk.</span></div>
+      <div class="card"><b>3.45 → ≥4.0</b> CSAT lift (target)<br><span style="color:var(--muted);font-size:14px;">Plausible from L1 chatbot + same-day responses on auto-resolved categories.</span></div>
+    </div>
+    <p class="footer-tag">All assumptions disclosed in <code>/api/dashboard</code> and the README.</p>
+  </section>
+
+  <!-- 9. FORECAST / PREVENTION -->
+  <section class="slide">
+    <h2>Forecast & prevention — by zone</h2>
+    <div class="grid-2">
+      <div>
+        <p>The coordinator surfaces a <b>spike-risk panel</b> on the dashboard: per-zone ticket volume, recent-vs-prior growth, and a risk classification.</p>
+        <p>Heuristic today (rule-based threshold over the last 30 days). <b>Plug-in design</b>: production version swaps in Prophet / ARIMA over a year of complaint volume — same API contract, same UI panel.</p>
+      </div>
+      <div class="card">
+        <h3 style="margin:0 0 12px;">Why rule-based now</h3>
+        <ul>
+          <li>Disclosed: not an ML model.</li>
+          <li>Decisive: explainable per-zone score.</li>
+          <li>Drop-in: <code>forecast_zones()</code> is a single function, swap implementation behind it.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10. END-USER CHATBOT -->
+  <section class="slide">
+    <h2>End-user chatbot — escalation by design</h2>
+    <p>The customer-facing specialist runs the <b>same policy</b> as the back-office coordinator: it tries to resolve via KB and account context, and opens a ticket only when warranted.</p>
+    <div class="grid-2" style="margin-top:18px;">
+      <div class="card">
+        <h3>Resolves directly</h3>
+        <ul>
+          <li>Come leggere il contatore</li>
+          <li>Procedura voltura — documenti & tempi</li>
+          <li>Stato disservizi nella mia zona</li>
+          <li>Riepilogo del mio account</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Opens a ticket (priority by signal)</h3>
+        <ul>
+          <li>Perdita visibile / allagamento → <span class="pill warn">urgent</span></li>
+          <li>Nuovo disservizio non registrato → <span class="pill warn">high</span></li>
+          <li>Importo bolletta da verificare → <span class="pill">medium</span></li>
+          <li>Richiesta esplicita di operatore → <span class="pill">medium</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11. WHAT'S NEXT -->
+  <section class="slide">
+    <h2>What's next (out of timebox)</h2>
+    <div class="grid-2">
+      <div>
+        <h3>Hours</h3>
+        <ul>
+          <li><b>Live SDK run</b> on the eval set — replace mock numbers with model-judged ones</li>
+          <li>Postgres swap — same DDL</li>
+          <li>SSO / RBAC for the operator UI</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Weeks</h3>
+        <ul>
+          <li><b>The Loop</b> — feedback from human overrides feeds eval set + prompt refinement</li>
+          <li>ML forecast (Prophet) replacing the heuristic</li>
+          <li>Italian voice channel via STT/TTS</li>
+          <li>Kafka stream for ticket events → real-time dashboards</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 12. CLOSE -->
+  <section class="slide">
+    <h2>Recap — what's deployable Monday</h2>
+    <ul>
+      <li>One Python process, SQLite file, plain HTML — clones in 60 seconds, runs without surprises.</li>
+      <li>Coordinator + 3 specialists, 20 narrow tools, <b>permission-gated escalation</b>.</li>
+      <li>50-case eval harness — <b>100% adversarial pass</b>, <b>69% handle-time reduction</b>.</li>
+      <li><b>€175K/year</b> direct opex saving on conservative volume; assumptions documented.</li>
+      <li>Provider-agnostic: runs against the <b>Anthropic API</b> or <b>AWS Bedrock</b> with a single env var (verified on <code>us.anthropic.claude-sonnet-4-6</code> in us-east-1).</li>
+      <li>All deliverables in repo: <code>README.md</code>, <code>CLAUDE.md</code>, <code>presentation.html</code>, <code>docs/adr/0001-architecture.md</code>.</li>
+    </ul>
+    <p class="footer-tag" style="margin-top:42px;">Repo: github.com/lsambolino/hackathon_helpdesk_utilities · Branch: feat/agentic-scaffold</p>
+  </section>
+
+</div>
+
+<div class="nav">slide <b id="cur">1</b> / <b id="tot">12</b> · <span style="color:#9aa9b9;">← →</span></div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const cur = document.getElementById('cur');
+  const tot = document.getElementById('tot');
+  let i = 0;
+  tot.textContent = slides.length;
+
+  function go(n) {
+    i = Math.max(0, Math.min(slides.length - 1, n));
+    slides.forEach((s, idx) => s.classList.toggle('active', idx === i));
+    cur.textContent = i + 1;
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); go(i + 1); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(i - 1); }
+    else if (e.key === 'Home') go(0);
+    else if (e.key === 'End') go(slides.length - 1);
+  });
+  document.addEventListener('click', (e) => { if (!e.target.closest('a,button')) go(i + 1); });
+</script>
+
+</body>
+</html>
