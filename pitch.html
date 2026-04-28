@@ -53,9 +53,32 @@
     padding: 48px 64px 64px;
     display: none;
     flex-direction: column;
-    overflow: hidden;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-gutter: stable;
   }
   .slide.active { display: flex; }
+
+  /* Subtle scrollbar styling */
+  .slide::-webkit-scrollbar { width: 10px; }
+  .slide::-webkit-scrollbar-track { background: transparent; }
+  .slide::-webkit-scrollbar-thumb {
+    background: rgba(31, 122, 209, 0.25);
+    border-radius: 100px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+  .slide::-webkit-scrollbar-thumb:hover {
+    background: rgba(31, 122, 209, 0.45);
+    background-clip: padding-box;
+    border: 2px solid transparent;
+  }
+  /* Firefox */
+  .slide { scrollbar-width: thin; scrollbar-color: rgba(31, 122, 209, 0.3) transparent; }
+
+  /* Cover keeps invisible scrollbar (dark bg) */
+  .slide.cover::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.25); background-clip: padding-box; border: 2px solid transparent; }
+  .slide.cover { scrollbar-color: rgba(255,255,255,0.25) transparent; }
 
   /* Header strip */
   .slide-header {
@@ -1204,10 +1227,10 @@
         <!-- Customer -->
         <g>
           <rect x="20" y="100" width="110" height="56" rx="6" fill="#ffffff" stroke="#d8e1ec" stroke-width="1.5"/>
-          <circle cx="48" cy="128" r="9" fill="none" stroke="#003a70" stroke-width="1.6"/>
-          <path d="M 36 144 Q 48 134 60 144" fill="none" stroke="#003a70" stroke-width="1.6"/>
-          <text x="105" y="125" text-anchor="end" fill="#0e1a2b" font-size="13" font-weight="600" font-family="Inter, sans-serif">Customer</text>
-          <text x="105" y="142" text-anchor="end" fill="#4a5568" font-size="10" font-family="Inter, sans-serif">1M base</text>
+          <circle cx="38" cy="122" r="5" fill="none" stroke="#003a70" stroke-width="1.5"/>
+          <path d="M 30 138 Q 38 130 46 138" fill="none" stroke="#003a70" stroke-width="1.5"/>
+          <text x="56" y="125" text-anchor="start" fill="#0e1a2b" font-size="13" font-weight="600" font-family="Inter, sans-serif">Customer</text>
+          <text x="56" y="141" text-anchor="start" fill="#4a5568" font-size="10" font-family="Inter, sans-serif">1M base</text>
         </g>
         <line x1="132" y1="128" x2="162" y2="128" stroke="#4a5568" stroke-width="1.5" marker-end="url(#arrG)"/>
 
@@ -1236,9 +1259,8 @@
           <text x="630" y="56" fill="#1a7a4c" font-size="13" font-weight="700" font-family="Inter, sans-serif">RESOLVED · ~30% of cases</text>
         </g>
 
-        <!-- Bottom branch: to operator -->
+        <!-- Bottom branch: to operator (~70%) -->
         <path d="M 502 156 L 530 156 L 530 200 L 562 200" fill="none" stroke="#1f7ad1" stroke-width="1.8" marker-end="url(#arrB)"/>
-        <text x="540" y="183" fill="#4a5568" font-size="10" font-style="italic" font-family="Inter, sans-serif">~70% need human</text>
 
         <!-- Operator + Co-pilot -->
         <g>
@@ -1349,13 +1371,28 @@
               <div class="feat-desc">Prompt injection, false confidence, role-play, override — without manual brainstorming</div>
             </div>
           </div>
+          <div class="feature-row">
+            <div class="feat-num claude">05</div>
+            <div class="feat-content">
+              <div class="feat-title">Eval-driven agent construction</div>
+              <div class="feat-desc">Synthetic ground-truth + adversarial set scored every iteration: classification accuracy 77.5%, auto-resolution 42.5%, false-confidence 6.7% — quality tracked commit-by-commit</div>
+            </div>
+          </div>
+          <div class="feature-row">
+            <div class="feat-num claude">06</div>
+            <div class="feat-content">
+              <div class="feat-title">Built a separate user-simulation agent</div>
+              <div class="feat-desc">A second Claude agent impersonates real Italian customers driving multi-turn conversations against the chatbot — a third Claude evaluator scores quality (1–5) and timing (1–5). Stress-tests the system without human QA.</div>
+            </div>
+          </div>
         </div>
 
         <div class="stamp-row">
           <span class="chip">Python 3.11+</span>
           <span class="chip">FastAPI</span>
           <span class="chip">SQLite</span>
-          <span class="chip">Vanilla JS</span>
+          <span class="chip">Eval harness</span>
+          <span class="chip">User-sim agent</span>
           <span class="chip" style="background:#cc785c;color:#fff;border-color:#cc785c;">Claude Code · 2 PCs</span>
         </div>
       </div>
