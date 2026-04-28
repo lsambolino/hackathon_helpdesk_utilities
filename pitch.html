@@ -1,0 +1,1717 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AI-Augmented Customer Care · Pitch</title>
+<style>
+  :root {
+    --ink: #0e1a2b;
+    --ink-soft: #4a5568;
+    --paper: #ffffff;
+    --paper-soft: #f5f8fb;
+    --rule: #d8e1ec;
+    --primary: #003a70;
+    --accent: #1f7ad1;
+    --accent-soft: #e8f1f8;
+    --good: #1a7a4c;
+    --good-soft: #e8f5ee;
+    --warn: #b8761a;
+    --bad: #b03030;
+    --bad-soft: #fbecea;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--paper-soft);
+    color: var(--ink);
+    font-family: "Inter", "Helvetica Neue", "Segoe UI", system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .deck {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    background: var(--paper);
+    padding: 48px 64px 64px;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .slide.active { display: flex; }
+
+  /* Header strip */
+  .slide-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 28px;
+    flex-shrink: 0;
+    gap: 18px;
+  }
+  .slide-header .brand {
+    font-weight: 600;
+    color: var(--primary);
+  }
+  .slide-header .meta {
+    color: var(--ink-soft);
+  }
+  .slide-header .project-tag {
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: var(--accent);
+    font-weight: 600;
+    text-transform: uppercase;
+    flex: 1;
+    text-align: center;
+  }
+
+  /* Acquanova brand logo (fictional client) */
+  .alm-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-transform: none;
+    letter-spacing: 0;
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .alm-mark {
+    width: 22px;
+    height: 24px;
+    flex-shrink: 0;
+  }
+  .alm-text {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1;
+  }
+  .alm-text .alm-1 {
+    color: var(--accent);
+    font-weight: 500;
+  }
+  .alm-text .alm-2 {
+    color: var(--primary);
+    font-weight: 700;
+  }
+  .alm-logo.lg .alm-mark { width: 56px; height: 62px; }
+  .alm-logo.lg .alm-text { font-size: 36px; letter-spacing: -0.02em; }
+  .alm-logo.invert .alm-text .alm-1 { color: #9ec5ec; }
+  .alm-logo.invert .alm-text .alm-2 { color: white; }
+  .alm-tagline {
+    display: block;
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    font-weight: 500;
+    margin-top: 4px;
+  }
+  .alm-logo.invert .alm-tagline { color: #9ec5ec; }
+
+  /* Typography */
+  h1.title-xl {
+    font-size: 64px;
+    line-height: 1.05;
+    margin: 0 0 18px 0;
+    color: var(--primary);
+    font-weight: 700;
+    letter-spacing: -0.015em;
+  }
+  h2.section {
+    font-size: 28px;
+    line-height: 1.2;
+    margin: 0 0 22px 0;
+    color: var(--primary);
+    font-weight: 600;
+    letter-spacing: -0.005em;
+  }
+  .eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  .lede {
+    font-size: 19px;
+    line-height: 1.4;
+    color: var(--ink);
+    max-width: 1000px;
+    font-weight: 400;
+  }
+  .quiet { color: var(--ink-soft); }
+  .strong { font-weight: 600; }
+
+  /* Cover slide */
+  .cover {
+    background: linear-gradient(140deg, #003a70 0%, #002850 70%);
+    color: white;
+    justify-content: space-between;
+  }
+  .cover .slide-header { border-color: rgba(255,255,255,0.18); color: rgba(255,255,255,0.7); }
+  .cover .slide-header .brand { color: #9ec5ec; }
+  .cover h1 {
+    color: white;
+    font-size: 72px;
+    line-height: 1.04;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 0 0 24px 0;
+    max-width: 1100px;
+  }
+  .cover .subtitle {
+    font-size: 22px;
+    color: #cfdef0;
+    max-width: 900px;
+    margin-bottom: 60px;
+    font-weight: 300;
+  }
+  .cover-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    color: rgba(255,255,255,0.7);
+    font-size: 13px;
+  }
+  .cover-bottom .stamp {
+    border: 1px solid rgba(255,255,255,0.3);
+    padding: 8px 14px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-size: 10px;
+  }
+
+  /* 3-column layout */
+  .grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 24px;
+  }
+  .force-card {
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 20px 20px;
+    background: var(--paper);
+  }
+  .force-card .icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: var(--accent-soft);
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+  .force-card h3 {
+    font-size: 16px;
+    margin: 0 0 6px 0;
+    color: var(--primary);
+  }
+  .force-card p {
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  /* Pareto bars */
+  .pareto {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .bar-row {
+    display: grid;
+    grid-template-columns: 260px 1fr 50px;
+    gap: 12px;
+    align-items: center;
+    font-size: 12.5px;
+  }
+  .bar-row .label { color: var(--ink); }
+  .bar-row .bar-track {
+    height: 12px;
+    background: var(--accent-soft);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .bar-row .bar-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+  }
+  .bar-row .pct { text-align: right; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+
+  .closer {
+    margin-top: auto;
+    padding-top: 18px;
+    border-top: 2px solid var(--accent);
+    font-size: 17px;
+    color: var(--ink);
+    font-style: italic;
+  }
+
+  /* Architecture diagram */
+  .process-flow {
+    width: 100%;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 8px 0 18px;
+  }
+  .process-flow svg {
+    width: 100%;
+    height: auto;
+    max-height: 460px;
+  }
+
+  .legend-strip {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 14px;
+  }
+  .legend-strip .lg {
+    border-left: 3px solid var(--accent);
+    padding: 6px 14px;
+    background: var(--paper-soft);
+    border-radius: 0 4px 4px 0;
+  }
+  .legend-strip .lg .step {
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 700;
+  }
+  .legend-strip .lg .name {
+    font-size: 14px;
+    color: var(--primary);
+    font-weight: 600;
+  }
+  .legend-strip .lg .desc {
+    font-size: 11.5px;
+    color: var(--ink-soft);
+    margin-top: 2px;
+    line-height: 1.4;
+  }
+
+  .arch-banner {
+    margin-top: 20px;
+    padding: 14px 22px;
+    background: var(--primary);
+    color: white;
+    border-radius: 6px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .arch-banner .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #4ec1ff;
+    flex-shrink: 0;
+  }
+
+  /* Claude branding */
+  .claude-mark {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+    color: #cc785c;
+  }
+  .claude-header {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    background: rgba(204, 120, 92, 0.10);
+    border: 1px solid rgba(204, 120, 92, 0.35);
+    padding: 7px 14px 7px 10px;
+    border-radius: 100px;
+    margin-bottom: 14px;
+  }
+  .claude-header.invert {
+    background: rgba(204, 120, 92, 0.18);
+    border-color: rgba(204, 120, 92, 0.55);
+  }
+  .claude-header .claude-name {
+    font-size: 12.5px;
+    font-weight: 700;
+    letter-spacing: 0;
+    text-transform: none;
+    color: #2a1d18;
+    line-height: 1;
+  }
+  .claude-header.invert .claude-name { color: #ffe5d8; }
+  .claude-header .sep {
+    width: 1px;
+    height: 12px;
+    background: rgba(204, 120, 92, 0.4);
+  }
+  .claude-header .role {
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #cc785c;
+    font-weight: 700;
+  }
+
+  /* ============ SLIDE 4 — BUILD & RUNTIME ============ */
+  .build-hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(140deg, #003a70 0%, #1f7ad1 100%);
+    border-radius: 8px;
+    padding: 18px 28px;
+    color: white;
+    margin-bottom: 16px;
+    box-shadow: 0 6px 18px rgba(0, 58, 112, 0.15);
+  }
+  .build-hero .stat {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+  }
+  .build-hero .stat .num {
+    font-size: 38px;
+    font-weight: 700;
+    color: white;
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .build-hero .stat .desc {
+    font-size: 14px;
+    color: #cfdef0;
+    line-height: 1.4;
+    max-width: 380px;
+  }
+  .build-hero .pill {
+    border: 1px solid rgba(255,255,255,0.35);
+    border-radius: 100px;
+    padding: 8px 16px;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #cfdef0;
+    font-weight: 600;
+  }
+
+  .build-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    flex: 1;
+  }
+  .build-col {
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 22px 24px;
+    background: var(--paper);
+    display: flex;
+    flex-direction: column;
+  }
+  .build-col.dev {
+    background: var(--accent-soft);
+    border-color: var(--accent);
+  }
+  .build-col.runtime {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+  }
+  .build-col .col-eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .build-col.runtime .col-eyebrow { color: #9ec5ec; }
+  .build-col h3 {
+    font-size: 22px;
+    margin: 0 0 4px 0;
+    color: var(--primary);
+    line-height: 1.2;
+  }
+  .build-col.runtime h3 { color: white; }
+  .build-col .sub {
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-bottom: 16px;
+    font-style: italic;
+  }
+  .build-col.runtime .sub { color: #9ec5ec; }
+  /* Graphical feature list */
+  .feature-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .feature-row {
+    display: grid;
+    grid-template-columns: 36px 1fr;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 10px 12px;
+    background: rgba(255,255,255,0.65);
+    border-radius: 6px;
+    border: 1px solid var(--rule);
+    transition: transform 0.15s ease;
+  }
+  .build-col.runtime .feature-row {
+    background: rgba(255,255,255,0.06);
+    border-color: rgba(255,255,255,0.12);
+  }
+  .feat-num {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    background: var(--accent);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    flex-shrink: 0;
+    letter-spacing: 0;
+  }
+  .build-col.runtime .feat-num {
+    background: rgba(78, 193, 255, 0.25);
+    color: #ffffff;
+    border: 1px solid rgba(78, 193, 255, 0.55);
+  }
+  .build-col.dev .feat-num.claude {
+    background: #cc785c;
+  }
+  .feat-content { display: flex; flex-direction: column; gap: 2px; }
+  .feat-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--primary);
+    line-height: 1.3;
+  }
+  .build-col.runtime .feat-title { color: white; }
+  .feat-desc {
+    font-size: 11.5px;
+    color: var(--ink-soft);
+    line-height: 1.45;
+  }
+  .build-col.runtime .feat-desc { color: #cfdef0; }
+
+  .build-col .stamp-row {
+    margin-top: auto;
+    padding-top: 14px;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .build-col.runtime .stamp-row { border-top-color: rgba(255,255,255,0.2); }
+  .build-col .chip {
+    font-size: 10.5px;
+    letter-spacing: 0.04em;
+    background: white;
+    border: 1px solid var(--rule);
+    color: var(--primary);
+    padding: 4px 10px;
+    border-radius: 100px;
+    font-weight: 600;
+  }
+  .build-col.runtime .chip {
+    background: rgba(255,255,255,0.12);
+    border-color: rgba(255,255,255,0.25);
+    color: white;
+  }
+
+  /* ============ SLIDE 5 — TIME COMPARE (NEW VISUAL) ============ */
+  .ticket-quote {
+    background: var(--accent-soft);
+    border-left: 3px solid var(--accent);
+    padding: 12px 16px;
+    border-radius: 0 4px 4px 0;
+    font-size: 13px;
+    color: var(--ink);
+    margin-bottom: 18px;
+    font-style: italic;
+  }
+  .ticket-quote .src {
+    display: block;
+    margin-top: 4px;
+    font-style: normal;
+    font-size: 10px;
+    color: var(--ink-soft);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .time-hero {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 36px;
+    align-items: center;
+    flex: 1;
+  }
+
+  .time-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+
+  .time-row {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .time-row .row-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .time-row .label {
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+  .time-row.before .label { color: var(--bad); }
+  .time-row.after .label { color: var(--good); }
+  .time-row .duration {
+    font-size: 32px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  .time-row.before .duration { color: var(--bad); }
+  .time-row.after .duration { color: var(--good); }
+  .time-row .duration .unit {
+    font-size: 18px;
+    color: var(--ink-soft);
+    font-weight: 500;
+  }
+
+  .time-bar {
+    height: 28px;
+    border-radius: 4px;
+    position: relative;
+    background: var(--paper-soft);
+    border: 1px solid var(--rule);
+    overflow: hidden;
+  }
+  .time-bar .fill {
+    height: 100%;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    font-size: 11px;
+    color: white;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .time-row.before .time-bar .fill {
+    background: linear-gradient(90deg, #c44747 0%, #a13838 100%);
+    width: 100%;
+  }
+  .time-row.after .time-bar .fill {
+    background: linear-gradient(90deg, #2a8f5c 0%, #1a7a4c 100%);
+    width: 0.7%;
+    min-width: 8px;
+  }
+
+  .time-detail {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+  .time-detail .channel {
+    color: var(--primary);
+    font-weight: 600;
+    margin-right: 6px;
+  }
+
+  .saving-callout {
+    background: linear-gradient(140deg, #003a70 0%, #1f7ad1 100%);
+    color: white;
+    border-radius: 8px;
+    padding: 32px 28px;
+    text-align: center;
+    box-shadow: 0 8px 24px rgba(0, 58, 112, 0.18);
+  }
+  .saving-callout .label {
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #9ec5ec;
+    margin-bottom: 12px;
+    font-weight: 600;
+  }
+  .saving-callout .pct {
+    font-size: 84px;
+    line-height: 1;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    margin-bottom: 4px;
+  }
+  .saving-callout .desc {
+    font-size: 15px;
+    color: #cfdef0;
+    margin: 14px 0 0 0;
+    line-height: 1.45;
+  }
+  .saving-callout .strong-line {
+    display: block;
+    margin-top: 8px;
+    font-weight: 600;
+    color: white;
+    font-size: 16px;
+  }
+
+  .complex-note {
+    margin-top: 18px;
+    background: var(--paper-soft);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 12px 18px;
+    font-size: 13px;
+    color: var(--ink);
+  }
+  .complex-note strong { color: var(--primary); }
+
+  /* Impact table */
+  .kpi-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin-bottom: 18px;
+  }
+  .kpi-table th, .kpi-table td {
+    padding: 11px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--rule);
+  }
+  .kpi-table th {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-soft);
+    font-weight: 600;
+    background: var(--paper-soft);
+  }
+  .kpi-table td.num { font-variant-numeric: tabular-nums; text-align: right; }
+  .kpi-table tr.total td {
+    background: var(--accent-soft);
+    font-weight: 700;
+    color: var(--primary);
+    border-top: 2px solid var(--accent);
+    border-bottom: none;
+    font-size: 15px;
+  }
+  .delta-good { color: var(--good); font-weight: 600; }
+
+  .scenarios {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 14px;
+  }
+  .scen-card {
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 16px 18px;
+    background: var(--paper);
+  }
+  .scen-card.central {
+    border-color: var(--accent);
+    border-width: 2px;
+    background: var(--accent-soft);
+  }
+  .scen-card .label {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 4px;
+  }
+  .scen-card.central .label { color: var(--accent); font-weight: 700; }
+  .scen-card .amount {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--primary);
+    font-variant-numeric: tabular-nums;
+  }
+  .scen-card .detail {
+    font-size: 11.5px;
+    color: var(--ink-soft);
+    margin-top: 4px;
+    line-height: 1.4;
+  }
+
+  .footnote {
+    font-size: 11px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+    margin-top: 14px;
+  }
+
+  /* Roadmap */
+  .roadmap {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    margin-bottom: 22px;
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .phase {
+    padding: 18px 18px;
+    border-right: 1px solid var(--rule);
+    background: var(--paper);
+    position: relative;
+  }
+  .phase:last-child { border-right: none; }
+  .phase .num {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 12px;
+    margin-bottom: 10px;
+  }
+  .phase h4 {
+    margin: 0 0 4px 0;
+    font-size: 14px;
+    color: var(--primary);
+  }
+  .phase .dur {
+    font-size: 10px;
+    color: var(--accent);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .phase p {
+    margin: 0;
+    font-size: 12px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+  .phase.gate::after {
+    content: "GO / NO-GO";
+    position: absolute;
+    top: 18px; right: -1px;
+    background: var(--warn);
+    color: white;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    padding: 3px 7px;
+    border-radius: 0 0 0 4px;
+  }
+
+  .risks {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+  .risk {
+    border-left: 3px solid var(--accent);
+    padding: 10px 14px;
+    background: var(--paper-soft);
+    border-radius: 0 4px 4px 0;
+  }
+  .risk h4 {
+    margin: 0 0 4px 0;
+    font-size: 12px;
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .risk p {
+    margin: 0;
+    font-size: 12px;
+    color: var(--ink-soft);
+    line-height: 1.45;
+  }
+
+  /* Final ask */
+  .ask-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+    flex: 1;
+  }
+  .ask-card {
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 24px;
+    background: var(--paper);
+    display: flex;
+    flex-direction: column;
+  }
+  .ask-card.cta {
+    background: var(--primary);
+    color: white;
+    border: none;
+  }
+  .ask-card .label {
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  .ask-card.cta .label { color: #9ec5ec; }
+  .ask-card h3 {
+    font-size: 19px;
+    margin: 0 0 14px 0;
+    color: var(--primary);
+    line-height: 1.25;
+  }
+  .ask-card.cta h3 { color: white; }
+  .ask-card ul {
+    margin: 0;
+    padding-left: 18px;
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+  }
+  .ask-card.cta ul { color: #cfdef0; }
+  .ask-card .footer-line {
+    margin-top: auto;
+    padding-top: 14px;
+    font-size: 12px;
+    color: var(--ink-soft);
+  }
+  .ask-card.cta .footer-line { color: #9ec5ec; border-top: 1px solid rgba(255,255,255,0.2); }
+
+  /* Navigation */
+  .nav {
+    position: fixed;
+    bottom: 16px;
+    right: 22px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    background: rgba(255,255,255,0.92);
+    border: 1px solid var(--rule);
+    border-radius: 100px;
+    padding: 5px 12px;
+    font-size: 12px;
+    color: var(--ink-soft);
+    z-index: 50;
+    backdrop-filter: blur(8px);
+  }
+  .nav button {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 4px 8px;
+    color: var(--primary);
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .nav button:hover { color: var(--accent); }
+  .nav .pos {
+    font-variant-numeric: tabular-nums;
+    min-width: 36px;
+    text-align: center;
+  }
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width: 1200px) {
+    .slide { padding: 36px 48px 56px; }
+    h1.title-xl { font-size: 56px; }
+    .cover h1 { font-size: 60px; }
+    .cover .subtitle { font-size: 20px; margin-bottom: 40px; }
+    h2.section { font-size: 24px; }
+    .lede { font-size: 17px; }
+    .saving-callout .pct { font-size: 64px; }
+    .alm-logo.lg .alm-mark { width: 48px; height: 54px; }
+    .alm-logo.lg .alm-text { font-size: 28px; }
+  }
+
+  @media (max-width: 1024px) {
+    html, body { height: auto; min-height: 100vh; overflow-y: auto; overflow-x: hidden; }
+    .deck { height: auto; min-height: 100vh; overflow: visible; }
+    .slide {
+      position: relative;
+      inset: auto;
+      height: auto;
+      min-height: 100vh;
+      display: none;
+      page-break-after: always;
+    }
+    .slide.active { display: flex; }
+    .slide-header { font-size: 10px; gap: 10px; flex-wrap: wrap; }
+    .slide-header .project-tag { flex: 1 0 100%; text-align: left; order: 3; padding-top: 4px; }
+    .build-cols { grid-template-columns: 1fr; gap: 14px; }
+    .grid-3 { grid-template-columns: 1fr 1fr; }
+    .ask-grid { grid-template-columns: 1fr 1fr; }
+    .roadmap { grid-template-columns: 1fr 1fr; }
+    .risks { grid-template-columns: 1fr 1fr; }
+    .arch-banner { flex-direction: row; }
+    .time-hero { grid-template-columns: 1fr; gap: 20px; }
+    .saving-callout { padding: 22px 20px; }
+    .saving-callout .pct { font-size: 56px; }
+    .ba-grid { grid-template-columns: 1fr; }
+    .build-hero { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .scenarios { grid-template-columns: 1fr; gap: 10px; }
+    .nav { bottom: 12px; right: 12px; padding: 4px 10px; }
+  }
+
+  @media (max-width: 720px) {
+    .slide { padding: 24px 20px 40px; }
+    body { font-size: 14px; }
+    h1.title-xl { font-size: 38px; }
+    .cover h1 { font-size: 40px; line-height: 1.08; }
+    .cover .subtitle { font-size: 17px; }
+    h2.section { font-size: 20px; line-height: 1.25; }
+    .lede { font-size: 15px; }
+    .grid-3 { grid-template-columns: 1fr; }
+    .ask-grid { grid-template-columns: 1fr; }
+    .roadmap { grid-template-columns: 1fr; }
+    .risks { grid-template-columns: 1fr; }
+    .kpi-table { font-size: 12px; }
+    .kpi-table th, .kpi-table td { padding: 8px 10px; }
+    .build-cols { grid-template-columns: 1fr; }
+    .stamp-row { gap: 5px; }
+    .chip { font-size: 9.5px; padding: 3px 8px; }
+    .alm-logo.lg .alm-mark { width: 40px; height: 44px; }
+    .alm-logo.lg .alm-text { font-size: 22px; }
+    .alm-tagline { font-size: 8px; }
+    .saving-callout .pct { font-size: 44px; }
+    .pareto .bar-row { grid-template-columns: 1fr; gap: 4px; font-size: 11.5px; }
+    .pareto .bar-row .pct { text-align: left; }
+    .footnote, .quiet { font-size: 10.5px; }
+    .closer { font-size: 14px; }
+    .slide-header { font-size: 9.5px; padding-bottom: 10px; margin-bottom: 18px; }
+    .slide-header .project-tag { font-size: 9px; }
+    .nav { bottom: 8px; right: 8px; padding: 3px 8px; font-size: 11px; }
+    .nav button { padding: 3px 6px; font-size: 12px; }
+  }
+
+  /* Print */
+  @media print {
+    @page { size: 1280px 800px; margin: 0; }
+    html, body { background: white; height: auto; overflow: visible; }
+    .deck { height: auto; overflow: visible; }
+    .slide {
+      display: flex !important;
+      position: relative;
+      page-break-after: always;
+      width: 1280px;
+      height: 800px;
+    }
+    .nav { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Acquanova fictional brand mark (referenced via <use href="#alm-drop"/>) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="almGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#4ec1ff"/>
+      <stop offset="55%" stop-color="#1f7ad1"/>
+      <stop offset="100%" stop-color="#003a70"/>
+    </linearGradient>
+  </defs>
+  <symbol id="claude-mark" viewBox="0 0 32 32">
+    <path d="M 16 1 C 16 9, 23 16, 31 16 C 23 16, 16 23, 16 31 C 16 23, 9 16, 1 16 C 9 16, 16 9, 16 1 Z"
+          fill="#cc785c"/>
+  </symbol>
+  <symbol id="alm-drop" viewBox="0 0 32 36">
+    <path d="M16 1.5 C 16 1.5, 3.5 16.5, 3.5 24 C 3.5 30.5, 9 34.5, 16 34.5 C 23 34.5, 28.5 30.5, 28.5 24 C 28.5 16.5, 16 1.5, 16 1.5 Z"
+          fill="url(#almGrad)" stroke="#003a70" stroke-width="0.6"/>
+    <!-- inner waves -->
+    <path d="M 7.5 22.5 Q 11.5 19.5, 16 22.5 T 24.5 22.5"
+          fill="none" stroke="#ffffff" stroke-width="1.6" stroke-linecap="round" opacity="0.95"/>
+    <path d="M 7.5 27 Q 11.5 24, 16 27 T 24.5 27"
+          fill="none" stroke="#ffffff" stroke-width="1.4" stroke-linecap="round" opacity="0.55"/>
+    <!-- highlight -->
+    <ellipse cx="11" cy="11" rx="2.2" ry="3.5" fill="#ffffff" opacity="0.45" transform="rotate(-25 11 11)"/>
+  </symbol>
+</svg>
+
+<div class="deck" id="deck">
+
+  <!-- =================== SLIDE 1 — COVER =================== -->
+  <section class="slide cover active" data-slide="1">
+    <div class="slide-header">
+      <span class="brand">Hackathon · Helpdesk Utilities</span>
+      <span>Client Pitch · April 2026</span>
+    </div>
+
+    <div style="margin-top: auto;">
+      <div class="alm-logo lg invert" style="margin-bottom: 28px;">
+        <svg class="alm-mark"><use href="#alm-drop"/></svg>
+        <span class="alm-text">
+          <span class="alm-1">Acqua</span><span class="alm-2">nova</span>
+          <span class="alm-tagline">Fictional water utility · for pitch purposes</span>
+        </span>
+      </div>
+      <div class="eyebrow" style="color: #9ec5ec;">AI-Augmented Customer Care · Pitch</div>
+      <h1>From reactive ticketing<br/>to predictive, self-service operations.</h1>
+      <p class="subtitle">
+        An operating proposal for Acquanova, a fictional regional water utility serving 1M customers:
+        cut ticket handling time, reduce cost, and anticipate failures before they reach the customer.
+      </p>
+    </div>
+
+    <div class="cover-bottom">
+      <div>
+        <div style="font-size:10px; letter-spacing:0.14em; text-transform:uppercase; color:#9ec5ec; margin-bottom:4px;">Prepared by</div>
+        <div style="font-size:15px; color:white; font-weight:600;">Helpdesk Utilities Team · Hackathon</div>
+      </div>
+      <div class="stamp">Confidential</div>
+    </div>
+  </section>
+
+  <!-- =================== SLIDE 2 — WHY NOW =================== -->
+  <section class="slide" data-slide="2">
+    <div class="slide-header">
+      <span class="brand"><span class="alm-logo"><svg class="alm-mark"><use href="#alm-drop"/></svg><span class="alm-text"><span class="alm-1">Acqua</span><span class="alm-2">nova</span></span></span></span><span class="project-tag">AI-Augmented Customer Care</span>
+      <span>02 · Why now</span>
+    </div>
+
+    <div class="eyebrow">The context</div>
+    <h2 class="section">One million customers, regulated SLAs, rising cost.<br/>Your ticketing system is the bottleneck.</h2>
+
+    <div class="grid-3">
+      <div class="force-card">
+        <div class="icon">V</div>
+        <h3>Volume</h3>
+        <p>~150,000 contacts per year across complaints, billing inquiries, provider switches and meter readings. Growing as digital channels expand.</p>
+      </div>
+      <div class="force-card">
+        <div class="icon">R</div>
+        <h3>Regulation</h3>
+        <p>ARERA RQTI sets strict deadlines for complaint handling. Missed SLAs trigger automatic indemnities and fines.</p>
+      </div>
+      <div class="force-card">
+        <div class="icon">€</div>
+        <h3>Cost</h3>
+        <p>Every euro of operating cost ends up in the tariff or the public deficit. Limited margin for inefficiency, but mandatory to chase it.</p>
+      </div>
+    </div>
+
+    <div style="margin-top: 28px;">
+      <div class="eyebrow">Top complaint categories — 1,000 historical tickets</div>
+      <div class="pareto">
+        <div class="bar-row">
+          <div class="label">Provider switch — errors</div>
+          <div class="bar-track"><div class="bar-fill" style="width: 100%;"></div></div>
+          <div class="pct">12.4%</div>
+        </div>
+        <div class="bar-row">
+          <div class="label">Wrong amount — overcharge</div>
+          <div class="bar-track"><div class="bar-fill" style="width: 96.8%;"></div></div>
+          <div class="pct">12.0%</div>
+        </div>
+        <div class="bar-row">
+          <div class="label">Account transfer — errors</div>
+          <div class="bar-track"><div class="bar-fill" style="width: 87.9%;"></div></div>
+          <div class="pct">10.9%</div>
+        </div>
+        <div class="bar-row">
+          <div class="label">Meter reading errors</div>
+          <div class="bar-track"><div class="bar-fill" style="width: 62.9%;"></div></div>
+          <div class="pct">7.8%</div>
+        </div>
+        <div class="bar-row">
+          <div class="label">Invoice sent to wrong address</div>
+          <div class="bar-track"><div class="bar-fill" style="width: 60.5%;"></div></div>
+          <div class="pct">7.5%</div>
+        </div>
+      </div>
+      <div class="quiet" style="font-size:12px; margin-top:8px;">Top 5 categories ≈ 51% of tickets · 14 categories cover the entire backlog.</div>
+    </div>
+
+    <div class="closer">
+      Today every ticket is handled as if it were the first. It shouldn't be.
+    </div>
+  </section>
+
+  <!-- =================== SLIDE 3 — SOLUTION =================== -->
+  <section class="slide" data-slide="3">
+    <div class="slide-header">
+      <span class="brand"><span class="alm-logo"><svg class="alm-mark"><use href="#alm-drop"/></svg><span class="alm-text"><span class="alm-1">Acqua</span><span class="alm-2">nova</span></span></span></span><span class="project-tag">AI-Augmented Customer Care</span>
+      <span>03 · The solution</span>
+    </div>
+
+    <div class="eyebrow">The architecture</div>
+    <h2 class="section">Two agentic layers and a predictive brain.<br/>One knowledge base, three points of value.</h2>
+
+    <div class="process-flow">
+      <svg viewBox="0 0 1180 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Process diagram">
+        <defs>
+          <marker id="arrG" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#4a5568"/>
+          </marker>
+          <marker id="arrB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#1f7ad1"/>
+          </marker>
+          <marker id="arrGr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#1a7a4c"/>
+          </marker>
+        </defs>
+
+        <!-- Customer -->
+        <g>
+          <rect x="20" y="100" width="110" height="56" rx="6" fill="#ffffff" stroke="#d8e1ec" stroke-width="1.5"/>
+          <circle cx="48" cy="128" r="9" fill="none" stroke="#003a70" stroke-width="1.6"/>
+          <path d="M 36 144 Q 48 134 60 144" fill="none" stroke="#003a70" stroke-width="1.6"/>
+          <text x="105" y="125" text-anchor="end" fill="#0e1a2b" font-size="13" font-weight="600" font-family="Inter, sans-serif">Customer</text>
+          <text x="105" y="142" text-anchor="end" fill="#4a5568" font-size="10" font-family="Inter, sans-serif">1M base</text>
+        </g>
+        <line x1="132" y1="128" x2="162" y2="128" stroke="#4a5568" stroke-width="1.5" marker-end="url(#arrG)"/>
+
+        <!-- Channels -->
+        <g>
+          <rect x="165" y="100" width="150" height="56" rx="6" fill="#ffffff" stroke="#d8e1ec" stroke-width="1.5"/>
+          <text x="240" y="118" text-anchor="middle" fill="#1f7ad1" font-size="9" letter-spacing="2" font-weight="700" font-family="Inter, sans-serif">CHANNELS</text>
+          <text x="240" y="138" text-anchor="middle" fill="#0e1a2b" font-size="11" font-weight="500" font-family="Inter, sans-serif">Web · App · Phone</text>
+          <text x="240" y="151" text-anchor="middle" fill="#4a5568" font-size="10" font-family="Inter, sans-serif">WhatsApp · Email</text>
+        </g>
+        <line x1="317" y1="128" x2="347" y2="128" stroke="#4a5568" stroke-width="1.5" marker-end="url(#arrG)"/>
+
+        <!-- AI Bot -->
+        <g>
+          <rect x="350" y="84" width="150" height="88" rx="8" fill="#003a70" stroke="#003a70"/>
+          <text x="425" y="108" text-anchor="middle" fill="#9ec5ec" font-size="9" letter-spacing="2" font-weight="700" font-family="Inter, sans-serif">LAYER 1</text>
+          <text x="425" y="134" text-anchor="middle" fill="#ffffff" font-size="18" font-weight="700" font-family="Inter, sans-serif">AI Chatbot</text>
+          <text x="425" y="156" text-anchor="middle" fill="#cfdef0" font-size="11" font-family="Inter, sans-serif">classify · retrieve · resolve</text>
+        </g>
+
+        <!-- Top branch: resolved -->
+        <path d="M 502 100 L 530 100 L 530 50 L 580 50" fill="none" stroke="#1a7a4c" stroke-width="1.8" marker-end="url(#arrGr)"/>
+        <g>
+          <rect x="582" y="28" width="220" height="44" rx="22" fill="#e8f5ee" stroke="#1a7a4c" stroke-width="1.8"/>
+          <text x="610" y="56" fill="#1a7a4c" font-size="16" font-weight="700" font-family="Inter, sans-serif">✓</text>
+          <text x="630" y="56" fill="#1a7a4c" font-size="13" font-weight="700" font-family="Inter, sans-serif">RESOLVED · ~30% of cases</text>
+        </g>
+
+        <!-- Bottom branch: to operator -->
+        <path d="M 502 156 L 530 156 L 530 200 L 562 200" fill="none" stroke="#1f7ad1" stroke-width="1.8" marker-end="url(#arrB)"/>
+        <text x="540" y="183" fill="#4a5568" font-size="10" font-style="italic" font-family="Inter, sans-serif">~70% need human</text>
+
+        <!-- Operator + Co-pilot -->
+        <g>
+          <rect x="565" y="172" width="240" height="56" rx="8" fill="#e8f1f8" stroke="#1f7ad1" stroke-width="2"/>
+          <text x="685" y="190" text-anchor="middle" fill="#1f7ad1" font-size="9" letter-spacing="2" font-weight="700" font-family="Inter, sans-serif">LAYER 2</text>
+          <text x="685" y="210" text-anchor="middle" fill="#003a70" font-size="15" font-weight="700" font-family="Inter, sans-serif">Operator + Co-pilot</text>
+          <text x="685" y="223" text-anchor="middle" fill="#4a5568" font-size="10" font-family="Inter, sans-serif">human-in-the-loop, AI assisted</text>
+        </g>
+
+        <!-- Arrow Operator → Back-office -->
+        <line x1="807" y1="200" x2="838" y2="200" stroke="#4a5568" stroke-width="1.5" marker-end="url(#arrG)"/>
+
+        <!-- Back-office -->
+        <g>
+          <rect x="840" y="172" width="140" height="56" rx="6" fill="#ffffff" stroke="#d8e1ec" stroke-width="1.5"/>
+          <text x="910" y="195" text-anchor="middle" fill="#1f7ad1" font-size="9" letter-spacing="2" font-weight="700" font-family="Inter, sans-serif">EXECUTION</text>
+          <text x="910" y="213" text-anchor="middle" fill="#0e1a2b" font-size="13" font-weight="600" font-family="Inter, sans-serif">Back-office systems</text>
+        </g>
+
+        <!-- Predictive Engine -->
+        <g>
+          <rect x="1000" y="84" width="160" height="88" rx="8" fill="#1f7ad1" stroke="#1f7ad1"/>
+          <text x="1080" y="108" text-anchor="middle" fill="#cfdef0" font-size="9" letter-spacing="2" font-weight="700" font-family="Inter, sans-serif">LAYER 3</text>
+          <text x="1080" y="134" text-anchor="middle" fill="#ffffff" font-size="16" font-weight="700" font-family="Inter, sans-serif">Predictive Engine</text>
+          <text x="1080" y="156" text-anchor="middle" fill="#cfdef0" font-size="10" font-family="Inter, sans-serif">forecasts · root causes</text>
+        </g>
+
+        <!-- Knowledge Base bar -->
+        <g>
+          <rect x="20" y="240" width="1140" height="32" rx="4" fill="#003a70"/>
+          <text x="40" y="261" fill="#9ec5ec" font-size="10" letter-spacing="2" font-weight="700" font-family="Inter, sans-serif">KNOWLEDGE BASE</text>
+          <text x="200" y="261" fill="#ffffff" font-size="12" font-family="Inter, sans-serif">Every closed ticket trains the system. Knowledge stays the client's asset.</text>
+        </g>
+
+        <!-- Dashed feedback lines from KB to Bot, Operator, Predictive Engine -->
+        <line x1="425" y1="240" x2="425" y2="172" stroke="#1f7ad1" stroke-dasharray="3,3" stroke-width="1.4" marker-end="url(#arrB)"/>
+        <line x1="685" y1="240" x2="685" y2="228" stroke="#1f7ad1" stroke-dasharray="3,3" stroke-width="1.4" marker-end="url(#arrB)"/>
+        <line x1="1080" y1="240" x2="1080" y2="172" stroke="#1f7ad1" stroke-dasharray="3,3" stroke-width="1.4" marker-end="url(#arrB)"/>
+
+        <!-- Predictive output (informs upstream process) -->
+        <path d="M 1000 110 L 980 110 L 980 50 L 810 50" fill="none" stroke="#1f7ad1" stroke-dasharray="3,3" stroke-width="1.4" marker-end="url(#arrB)"/>
+        <text x="900" y="42" text-anchor="middle" fill="#1f7ad1" font-size="9" font-style="italic" font-family="Inter, sans-serif">prevention insights</text>
+      </svg>
+    </div>
+
+    <div class="arch-banner">
+      <span class="dot"></span>
+      <span><strong>One knowledge base feeds all three layers.</strong> Every closed ticket trains the system. The accumulated knowledge stays your asset, not the vendor's.</span>
+    </div>
+  </section>
+
+  <!-- =================== SLIDE 4 — BUILD & RUNTIME =================== -->
+  <section class="slide" data-slide="4">
+    <div class="slide-header">
+      <span class="brand"><span class="alm-logo"><svg class="alm-mark"><use href="#alm-drop"/></svg><span class="alm-text"><span class="alm-1">Acqua</span><span class="alm-2">nova</span></span></span></span><span class="project-tag">AI-Augmented Customer Care</span>
+      <span>04 · How we built it</span>
+    </div>
+
+    <div class="eyebrow">Agentic dev meets agentic runtime</div>
+    <h2 class="section">Same model family on both sides of the table.<br/>Faster to build · safer to operate.</h2>
+
+    <div class="build-hero">
+      <div class="stat">
+        <span class="num">&lt; 1 day</span>
+        <span class="desc">From blank repo to working MVP: backend, database, 3 specialist agents, 20 tools, frontend, eval harness, and this deck. Built by 2 people on 2 PCs.</span>
+      </div>
+      <div class="pill">Hackathon · 1 sprint</div>
+    </div>
+
+    <div class="build-cols">
+
+      <div class="build-col dev">
+        <div class="col-eyebrow">How we built it · from the team README</div>
+        <div class="claude-header">
+          <svg class="claude-mark"><use href="#claude-mark"/></svg>
+          <span class="claude-name">Claude Code</span>
+          <span class="sep"></span>
+          <span class="role">Dev Partner</span>
+        </div>
+        <h3>How Claude Code accelerated the work.</h3>
+
+        <div class="feature-list">
+          <div class="feature-row">
+            <div class="feat-num claude">01</div>
+            <div class="feat-content">
+              <div class="feat-title">Generated the entire scaffold</div>
+              <div class="feat-desc">FastAPI, SQLite schema, seed data — produced from a single design discussion</div>
+            </div>
+          </div>
+          <div class="feature-row">
+            <div class="feat-num claude">02</div>
+            <div class="feat-content">
+              <div class="feat-title">Spawned subagents in parallel</div>
+              <div class="feat-desc">Frontend, eval set, presentation shipped concurrently — avoiding merge collisions on a 2-PC repo</div>
+            </div>
+          </div>
+          <div class="feature-row">
+            <div class="feat-num claude">03</div>
+            <div class="feat-content">
+              <div class="feat-title">Researched the Claude Agent SDK</div>
+              <div class="feat-desc">Python API: imports, tool / permission / structured-output patterns → working coordinator + specialist loop</div>
+            </div>
+          </div>
+          <div class="feature-row">
+            <div class="feat-num claude">04</div>
+            <div class="feat-content">
+              <div class="feat-title">Drafted the adversarial eval cases</div>
+              <div class="feat-desc">Prompt injection, false confidence, role-play, override — without manual brainstorming</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="stamp-row">
+          <span class="chip">Python 3.11+</span>
+          <span class="chip">FastAPI</span>
+          <span class="chip">SQLite</span>
+          <span class="chip">Vanilla JS</span>
+          <span class="chip" style="background:#cc785c;color:#fff;border-color:#cc785c;">Claude Code · 2 PCs</span>
+        </div>
+      </div>
+
+      <div class="build-col runtime">
+        <div class="col-eyebrow">What runs in production</div>
+        <div class="claude-header invert">
+          <svg class="claude-mark"><use href="#claude-mark"/></svg>
+          <span class="claude-name">Claude Agent SDK</span>
+          <span class="sep"></span>
+          <span class="role">Runtime</span>
+        </div>
+        <h3>Coordinator + specialists, governed by code.</h3>
+
+        <div class="feature-list">
+          <div class="feature-row">
+            <div class="feat-num">01</div>
+            <div class="feat-content">
+              <div class="feat-title">1 Coordinator agent</div>
+              <div class="feat-desc">Claude Sonnet 4.6 — classifies, routes, validates, escalates</div>
+            </div>
+          </div>
+          <div class="feature-row">
+            <div class="feat-num">02</div>
+            <div class="feat-content">
+              <div class="feat-title">3 Specialist subagents</div>
+              <div class="feat-desc">Billing · Switching · Chatbot — narrow context, 4–5 dedicated tools each</div>
+            </div>
+          </div>
+          <div class="feature-row">
+            <div class="feat-num">03</div>
+            <div class="feat-content">
+              <div class="feat-title">20 MCP tools on SQLite</div>
+              <div class="feat-desc">Every action audit-logged for ARERA / GDPR compliance</div>
+            </div>
+          </div>
+          <div class="feature-row">
+            <div class="feat-num">04</div>
+            <div class="feat-content">
+              <div class="feat-title">Permission callback</div>
+              <div class="feat-desc">HITL on €&gt;500, vulnerable customer, low confidence, adversarial signals</div>
+            </div>
+          </div>
+          <div class="feature-row">
+            <div class="feat-num">05</div>
+            <div class="feat-content">
+              <div class="feat-title">Provider-agnostic</div>
+              <div class="feat-desc">Anthropic API or AWS Bedrock — same code, swap with one env var</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="stamp-row">
+          <span class="chip">Sonnet 4.6</span>
+          <span class="chip">MCP tools</span>
+          <span class="chip">Bedrock-ready</span>
+          <span class="chip">100% adversarial pass</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- =================== SLIDE 5 — TIME COMPARE (REDESIGNED) =================== -->
+  <section class="slide" data-slide="5">
+    <div class="slide-header">
+      <span class="brand"><span class="alm-logo"><svg class="alm-mark"><use href="#alm-drop"/></svg><span class="alm-text"><span class="alm-1">Acqua</span><span class="alm-2">nova</span></span></span></span><span class="project-tag">AI-Augmented Customer Care</span>
+      <span>05 · A real ticket</span>
+    </div>
+
+    <div class="eyebrow">Case CMP-00001 · Payment not registered</div>
+    <h2 class="section">Same ticket. Same customer. 22 minutes vs 90 seconds.</h2>
+
+    <div class="ticket-quote">
+      "I paid at the post office on 2023-12-06 with receipt number REF-5667265.
+      Three weeks later I received a disconnection warning. Please apply my payment immediately."
+      <span class="src">Verbatim from hydric_complaints_backlog.json — payment_not_registered</span>
+    </div>
+
+    <div class="time-hero">
+      <div class="time-bars">
+
+        <div class="time-row before">
+          <div class="row-head">
+            <span class="label">Today · manual end-to-end</span>
+            <span class="duration">22<span class="unit"> min</span> + <span style="color: var(--bad);">2</span><span class="unit"> days</span></span>
+          </div>
+          <div class="time-bar">
+            <div class="fill">22 min agent · 2 days customer wait</div>
+          </div>
+          <div class="time-detail">
+            <span class="channel">Phone →</span> 8 min IVR &nbsp;·&nbsp; operator opens 3 systems &nbsp;·&nbsp; manual payment lookup &nbsp;·&nbsp; ticket queued to back-office &nbsp;·&nbsp; disconnection cancelled 2 days later
+          </div>
+        </div>
+
+        <div class="time-row after">
+          <div class="row-head">
+            <span class="label">Tomorrow · conversational resolution</span>
+            <span class="duration">90<span class="unit"> seconds</span></span>
+          </div>
+          <div class="time-bar">
+            <div class="fill">90s</div>
+          </div>
+          <div class="time-detail">
+            <span class="channel">Chatbot →</span> bot retrieves payment by REF-5667265 &nbsp;·&nbsp; applies it &nbsp;·&nbsp; cancels disconnection &nbsp;·&nbsp; pushes confirmation &nbsp;·&nbsp; full audit log written
+          </div>
+        </div>
+
+      </div>
+
+      <div class="saving-callout">
+        <div class="label">Time saved per ticket</div>
+        <div class="pct">−93%</div>
+        <div class="desc">
+          From <span class="strong" style="color:white;">22 min</span> of agent work
+          to <span class="strong" style="color:white;">zero</span>.
+          <span class="strong-line">Customer waits 90 seconds, not 2 days.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="complex-note">
+      <strong>Complex cases</strong> — when the bot can't close the ticket, it triages and pre-fills the case for the operator. Average resolution time on complex tickets drops from <strong>18 min to 6 min</strong>.
+    </div>
+  </section>
+
+  <!-- =================== SLIDE 6 — IMPACT =================== -->
+  <section class="slide" data-slide="6">
+    <div class="slide-header">
+      <span class="brand"><span class="alm-logo"><svg class="alm-mark"><use href="#alm-drop"/></svg><span class="alm-text"><span class="alm-1">Acqua</span><span class="alm-2">nova</span></span></span></span><span class="project-tag">AI-Augmented Customer Care</span>
+      <span>06 · Impact &amp; business case</span>
+    </div>
+
+    <div class="eyebrow">Business case · grounded in measured eval data</div>
+    <h2 class="section">€175k direct opex saving / year. Payback under 12 months.</h2>
+
+    <table class="kpi-table">
+      <thead>
+        <tr>
+          <th>Indicator</th>
+          <th class="num">Today</th>
+          <th class="num">With agent</th>
+          <th class="num">Δ</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Annual ticket volume</td>
+          <td class="num">100,000</td>
+          <td class="num">100,000</td>
+          <td class="num quiet">same</td>
+        </tr>
+        <tr>
+          <td>Auto-resolution rate</td>
+          <td class="num">0%</td>
+          <td class="num">42.5%</td>
+          <td class="num delta-good">measured</td>
+        </tr>
+        <tr>
+          <td>Average handle time</td>
+          <td class="num">8.0 min</td>
+          <td class="num">2.5 min</td>
+          <td class="num delta-good">−69%</td>
+        </tr>
+        <tr>
+          <td>Cost per ticket (fully loaded)</td>
+          <td class="num">€ 3.33</td>
+          <td class="num">€ 1.58</td>
+          <td class="num delta-good">−€ 1.76</td>
+        </tr>
+        <tr>
+          <td>CSAT (1–5)</td>
+          <td class="num">3.45</td>
+          <td class="num">4.2</td>
+          <td class="num delta-good">+0.8</td>
+        </tr>
+        <tr class="total">
+          <td>Direct opex saving / year</td>
+          <td class="num">—</td>
+          <td class="num">€ 175,500</td>
+          <td class="num">central case</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="scenarios">
+      <div class="scen-card">
+        <div class="label">Conservative</div>
+        <div class="amount">€ 120k/yr</div>
+        <div class="detail">Auto-resolution 30% · AHT −50% · direct opex only</div>
+      </div>
+      <div class="scen-card central">
+        <div class="label">Central ★ measured</div>
+        <div class="amount">€ 175k/yr</div>
+        <div class="detail">Auto-resolution 42.5% · AHT −69% · eval harness numbers</div>
+      </div>
+      <div class="scen-card">
+        <div class="label">With second-order</div>
+        <div class="amount">€ 280k/yr</div>
+        <div class="detail">+ predictive prevention · ARERA penalty avoidance · retention from CSAT lift</div>
+      </div>
+    </div>
+
+    <div class="footnote">
+      Baseline: 100k tickets/yr (≈10% of 1M customers, conservative for Italian water sector). Human cost €3.33/ticket = 8 min × €25/h fully loaded.
+      Agent cost €1.58/ticket = mix of auto-resolved (€0 marginal) and pre-triaged escalations. Numbers measured by the eval harness on synthetic dataset of 1,000 complaints; will be re-baselined in week 1 of the pilot on real data.
+    </div>
+  </section>
+
+  <!-- =================== SLIDE 7 — ROADMAP & RISKS =================== -->
+  <section class="slide" data-slide="7">
+    <div class="slide-header">
+      <span class="brand"><span class="alm-logo"><svg class="alm-mark"><use href="#alm-drop"/></svg><span class="alm-text"><span class="alm-1">Acqua</span><span class="alm-2">nova</span></span></span></span><span class="project-tag">AI-Augmented Customer Care</span>
+      <span>07 · Roadmap &amp; risks</span>
+    </div>
+
+    <div class="eyebrow">6 months · 4 phases · 1 mid-point go/no-go</div>
+    <h2 class="section">Pragmatic roadmap. Visible value from month 3.</h2>
+
+    <div class="roadmap">
+      <div class="phase">
+        <div class="num">1</div>
+        <div class="dur">Weeks 1–4</div>
+        <h4>Discover</h4>
+        <p>Real baseline on metrics, top-5 categories, data access, business case re-baselined on actual numbers.</p>
+      </div>
+      <div class="phase gate">
+        <div class="num">2</div>
+        <div class="dur">Weeks 5–12</div>
+        <h4>Co-pilot pilot</h4>
+        <p>Co-pilot on 2 categories with 8 operators. Measure AHT, response quality, operator adoption.</p>
+      </div>
+      <div class="phase">
+        <div class="num">3</div>
+        <div class="dur">Weeks 13–18</div>
+        <h4>Customer chatbot</h4>
+        <p>Public release on web and app. 3 priority use cases. Deflection rate measured against control.</p>
+      </div>
+      <div class="phase">
+        <div class="num">4</div>
+        <div class="dur">Weeks 19–24</div>
+        <h4>Predictive layer</h4>
+        <p>Volume forecasts and root-cause clustering. Executive dashboard. First quarterly defects report.</p>
+      </div>
+    </div>
+
+    <div class="eyebrow" style="margin-top:6px;">Risks &amp; guardrails</div>
+    <div class="risks">
+      <div class="risk">
+        <h4>Regulatory</h4>
+        <p>Human-in-the-loop on every external action. Full audit log. Models hosted in EU.</p>
+      </div>
+      <div class="risk">
+        <h4>Hallucinations</h4>
+        <p>Bot acts only on data retrieved from your systems (RAG). Actions go through workflow engine, not free text.</p>
+      </div>
+      <div class="risk">
+        <h4>Workforce</h4>
+        <p>Co-pilot before replacement. Operators use it, customers don't see it. FTE redeployed, not laid off.</p>
+      </div>
+      <div class="risk">
+        <h4>Lock-in</h4>
+        <p>Knowledge base remains your asset. Open standards. Models are interchangeable.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== SLIDE 8 — THE ASK =================== -->
+  <section class="slide" data-slide="8">
+    <div class="slide-header">
+      <span class="brand"><span class="alm-logo"><svg class="alm-mark"><use href="#alm-drop"/></svg><span class="alm-text"><span class="alm-1">Acqua</span><span class="alm-2">nova</span></span></span></span><span class="project-tag">AI-Augmented Customer Care</span>
+      <span>08 · The ask</span>
+    </div>
+
+    <div class="eyebrow">Decision</div>
+    <h2 class="section">One decision. One owner. One date.</h2>
+
+    <p class="lede">
+      We're asking for green-light on <span class="strong">Phase 1 · Discover</span>: 4 weeks, fixed price, concrete outputs.
+      No long-term commitment before the Go/No-Go review.
+    </p>
+
+    <div class="ask-grid">
+      <div class="ask-card">
+        <div class="label">What we need from you</div>
+        <h3>Three inputs from the client</h3>
+        <ul>
+          <li>1 business sponsor with decision mandate</li>
+          <li>Data access to ticketing and billing systems</li>
+          <li>2 SMEs (customer care, billing) for 4h/week</li>
+        </ul>
+        <div class="footer-line">Without these three, we don't start. With them, we start Monday.</div>
+      </div>
+
+      <div class="ask-card">
+        <div class="label">What you get back</div>
+        <h3>Three deliverables in 4 weeks</h3>
+        <ul>
+          <li>Measured baseline on volumes, AHT, cost, CSAT</li>
+          <li>Business case re-baselined on your actual numbers</li>
+          <li>Prioritised use-case backlog ready for Pilot</li>
+        </ul>
+        <div class="footer-line">No slides. Operating documents.</div>
+      </div>
+
+      <div class="ask-card cta">
+        <div class="label">Decision today</div>
+        <h3>Go on Phase 1. Fixed price. Kick-off in 2 weeks.</h3>
+        <ul>
+          <li>Sponsor: <span class="strong" style="color:white;">_____________</span></li>
+          <li>Kick-off: <span class="strong" style="color:white;">_____________</span></li>
+          <li>Pilot decision: end of week 4</li>
+        </ul>
+        <div class="footer-line">The risk of not starting is higher than the risk of starting.</div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- Navigation -->
+<div class="nav">
+  <button id="prev" aria-label="Previous">←</button>
+  <span class="pos"><span id="cur">1</span> / <span id="total">7</span></span>
+  <button id="next" aria-label="Next">→</button>
+</div>
+
+<script>
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const total = slides.length;
+  document.getElementById('total').textContent = total;
+  let idx = 0;
+
+  function show(i) {
+    idx = Math.max(0, Math.min(total - 1, i));
+    slides.forEach((s, n) => s.classList.toggle('active', n === idx));
+    document.getElementById('cur').textContent = idx + 1;
+    if (location.hash !== '#' + (idx + 1)) {
+      history.replaceState(null, '', '#' + (idx + 1));
+    }
+  }
+
+  document.getElementById('next').addEventListener('click', () => show(idx + 1));
+  document.getElementById('prev').addEventListener('click', () => show(idx - 1));
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { show(idx + 1); e.preventDefault(); }
+    if (e.key === 'ArrowLeft' || e.key === 'PageUp') { show(idx - 1); e.preventDefault(); }
+    if (e.key === 'Home') show(0);
+    if (e.key === 'End') show(total - 1);
+  });
+
+  // hash deep-link
+  const fromHash = parseInt((location.hash || '#1').slice(1), 10);
+  if (!isNaN(fromHash)) show(fromHash - 1);
+</script>
+
+</body>
+</html>
