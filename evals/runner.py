@@ -20,7 +20,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-from app.agents.coordinator import triage_ticket
+from app.agents.coordinator import _has_credentials, triage_ticket
 from app.db import conn_ctx, init_db, now_iso
 
 EVAL_DIR = Path(__file__).resolve().parent
@@ -206,8 +206,9 @@ def main() -> None:
                    help="Use the real Claude Agent SDK (requires ANTHROPIC_API_KEY).")
     args = p.parse_args()
 
-    if args.live and not os.environ.get("ANTHROPIC_API_KEY"):
-        print("ERROR: --live requires ANTHROPIC_API_KEY in env. Falling back to mock.")
+    if args.live and not _has_credentials():
+        print("ERROR: --live needs either ANTHROPIC_API_KEY or "
+              "CLAUDE_CODE_USE_BEDROCK=1 + AWS creds. Falling back to mock.")
         args.live = False
 
     summary = asyncio.run(run(live=args.live))

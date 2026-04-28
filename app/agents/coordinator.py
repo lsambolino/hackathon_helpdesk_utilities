@@ -289,8 +289,11 @@ async def triage_ticket(ticket_id: int, *, mock: bool | None = None) -> TriageRe
         f"Subject: {tk['subject']}\nBody: {tk['body']}"
     )
 
+    async def _stream():
+        yield {"type": "user", "message": {"role": "user", "content": user_prompt}}
+
     final_text = ""
-    async for msg in query(prompt=user_prompt, options=options):
+    async for msg in query(prompt=_stream(), options=options):
         if isinstance(msg, AssistantMessage):
             for block in msg.content:
                 if isinstance(block, ToolUseBlock):
